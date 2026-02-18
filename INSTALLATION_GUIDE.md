@@ -106,7 +106,7 @@ Choose the editor you use. Chain works with these editors:
 
 ```bash
 # Clone to your project folder
-git clone https://github.com/martijnbokma/ai-toolkit.git my-project
+git clone https://github.com/martijnbokma/chain.git my-project
 cd my-project
 
 # Install dependencies and build
@@ -134,8 +134,8 @@ bun run chain init
 **Perfect for development and testing!** Use it directly from your local copy:
 
 ```bash
-# Navigate to the ai-toolkit folder
-cd /path/to/ai-toolkit
+# Navigate to the chain folder
+cd /path/to/chain
 
 # Install dependencies and build
 bun install
@@ -167,13 +167,13 @@ Install as part of your project using GitHub source:
 
 ```bash
 # With Bun
-bun add -D github:martijnbokma/ai-toolkit
+bun add -D github:martijnbokma/chain
 
 # With npm
-npm install -D github:martijnbokma/ai-toolkit
+npm install -D github:martijnbokma/chain
 
 # With pnpm
-pnpm add -D github:martijnbokma/ai-toolkit
+pnpm add -D github:martijnbokma/chain
 
 # Then use in your project
 bun run chain init
@@ -243,7 +243,7 @@ Run these commands in your terminal:
 
 ```bash
 # Clone Chain to your project
-git clone https://github.com/martijnbokma/ai-toolkit.git chain-tools
+git clone https://github.com/martijnbokma/chain.git chain-tools
 
 # Install dependencies
 cd chain-tools
@@ -810,8 +810,8 @@ jobs:
 
 ### 5. Join the Community
 
-- 🐛 Report issues: [GitHub Issues](https://github.com/martijnbokma/ai-toolkit/issues)
-- 💬 Discuss: [GitHub Discussions](https://github.com/martijnbokma/ai-toolkit/discussions)
+- 🐛 Report issues: [GitHub Issues](https://github.com/martijnbokma/chain/issues)
+- 💬 Discuss: [GitHub Discussions](https://github.com/martijnbokma/chain/discussions)
 - 📖 Documentation: [Full Guide](docs/GUIDE.md)
 
 ---
@@ -866,7 +866,7 @@ npx chain promote skills/my-skill.md
 4. **Consult the docs**: See [docs/GUIDE.md](docs/GUIDE.md) for detailed information
    - The full guide has more in-depth explanations
 
-5. **Report issues**: [GitHub Issues](https://github.com/martijnbokma/ai-toolkit/issues)
+5. **Report issues**: [GitHub Issues](https://github.com/martijnbokma/chain/issues)
    - If you're still stuck, ask for help!
 
 **💡 Quick fix checklist:**

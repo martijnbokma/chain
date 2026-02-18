@@ -1,5 +1,5 @@
 {
-  "name": "chain",
+  "name": "@martijnbokma/chain",
   "version": "0.1.0",
   "description": "Universal AI chain — sync rules, skills, and workflows to all AI editors from a single source of truth",
   "type": "module",
@@ -16,9 +16,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/martijnbokma/ai-toolkit"
+    "url": "https://github.com/martijnbokma/chain"
   },
-  "homepage": "https://github.com/martijnbokma/ai-toolkit#readme",
+  "homepage": "https://github.com/martijnbokma/chain#readme",
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",

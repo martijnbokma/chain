@@ -50,7 +50,7 @@ Built with TypeScript precision and tested across 424+ test cases, Chain is the 
 
 ```bash
 # Clone and setup instantly
-git clone https://github.com/martijnbokma/ai-toolkit.git my-project
+git clone https://github.com/martijnbokma/chain.git my-project
 cd my-project
 bun install
 bun run build
@@ -61,15 +61,15 @@ bun run chain init
 
 ```bash
 # Method 1: Use bunx (no installation)
-bunx github:martijnbokma/ai-toolkit@latest init
+bunx github:martijnbokma/chain@latest init
 
 # Method 2: Install as dev dependency
-bun add -D github:martijnbokma/ai-toolkit
+bun add -D github:martijnbokma/chain
 bun run chain init
 
 # Method 3: Manual setup
-git clone https://github.com/martijnbokma/ai-toolkit.git
-cd ai-toolkit
+git clone https://github.com/martijnbokma/chain.git
+cd chain
 bun install
 bun run build
 ```
@@ -78,8 +78,8 @@ bun run build
 
 ```bash
 # For developers wanting to contribute
-git clone https://github.com/martijnbokma/ai-toolkit.git
-cd ai-toolkit
+git clone https://github.com/martijnbokma/chain.git
+cd chain
 bun install
 bun run build
 bun run test:run  # Verify everything works

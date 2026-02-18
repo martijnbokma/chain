@@ -315,4 +315,4 @@ content_sources:
 3. **Configure your projects** with the appropriate `content_sources`
 4. **Start syncing** with `chain sync`
 
-Need help? Check the [main documentation](../README.md) or [open an issue](https://github.com/martijnbokma/ai-toolkit/issues).
+Need help? Check the [main documentation](../README.md) or [open an issue](https://github.com/martijnbokma/chain/issues).
