@@ -528,7 +528,7 @@ async function runFullMenu(): Promise<void> {
   }
 }
 
-export const fullMenuCommand = new Command("full-menu")
+export const fullMenuCommand = new Command("menu")
   .description("Complete interactive menu with all package.json scripts and arrow key navigation")
   .option("--quick", "Show quick actions menu", false)
   .action(async (options) => {

@@ -18,7 +18,6 @@ import { performanceCommand } from "./performance.js";
 import { realtimeSyncCommand } from "./realtime-sync.js";
 import { improvePromptsCommand } from "./improve-prompts.js";
 import { templatesSyncCommand } from "./templates-sync.js";
-import { menuCommand } from "./menu.js";
 import { fullMenuCommand } from "./full-menu.js";
 
 const program = new Command();
@@ -195,10 +194,7 @@ program.addCommand(realtimeSyncCommand);
 // Add the improve-prompts command
 program.addCommand(improvePromptsCommand);
 
-// Add the menu command
-program.addCommand(menuCommand);
-
-// Add the full menu command (complete with all scripts)
+// Add the menu command (complete with all scripts)
 program.addCommand(fullMenuCommand);
 
 program.parse();

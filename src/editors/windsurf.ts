@@ -13,9 +13,9 @@ export class WindsurfAdapter extends BaseEditorAdapter {
   };
 
   protected entryPointTitle = 'Windsurf Rules';
-  protected closingMessage = 'Rules and workflows are managed by ai-toolkit.\nSee `.chain/` for the source of truth.';
+  protected closingMessage = 'Rules and workflows are managed by @silverfox14/chain.\nSee `.chain/` for the source of truth.';
 
   generateFrontmatter(_skillName: string, _description?: string): string {
-    return ['---', 'description: Auto-synced by ai-toolkit', '---', ''].join('\n');
+    return ['---', 'description: Auto-synced by @silverfox14/chain', '---', ''].join('\n');
   }
 }

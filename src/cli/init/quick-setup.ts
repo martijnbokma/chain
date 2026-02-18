@@ -109,17 +109,45 @@ export async function runQuickSetup(
   if (!editors) return null;
   config.editors = editors;
 
-  // --- 4. Auto-detect shared content source (lightweight SSOT discovery) ---
-  const detectedSsot = await detectNearbySsot(projectRoot);
-  if (detectedSsot) {
-    const useSsot = await p.confirm({
-      message: `Found shared content source at ${detectedSsot}. Link it for cross-project sync?`,
-      initialValue: true,
-    });
-    if (isCancelled(useSsot)) return null;
+  // --- 4. Cross-Project Sync Setup ---
+  const useSharedContent = await p.confirm({
+    message: "🔄 Share your AI skills/rules across multiple projects?",
+    initialValue: false,
+  });
+  if (isCancelled(useSharedContent)) return null;
 
-    if (useSsot) {
-      config.content_sources = [{ type: "local", path: detectedSsot }];
+  if (useSharedContent) {
+    const sharedPath = await p.text({
+      message: "Where should your shared content be stored?",
+      placeholder: "~/.chain-hub",
+      defaultValue: "~/.chain-hub",
+    });
+    if (isCancelled(sharedPath)) return null;
+
+    // Create shared directory if it doesn't exist
+    const expandedPath = sharedPath.replace(/^~/, require('os').homedir());
+    const { ensureDir } = await import('../../utils/file-ops.js');
+    await ensureDir(expandedPath);
+
+    config.content_sources = [{ type: "local", path: sharedPath }];
+  }
+
+  // --- 5. Auto-detect shared content source (development mode only) ---
+  // Only show for development - skip for normal npm package users
+  const isDevelopment = process.env.NODE_ENV === 'development' || process.env.CHAIN_DEV_MODE === 'true';
+  
+  if (isDevelopment && !useSharedContent) {
+    const detectedSsot = await detectNearbySsot(projectRoot);
+    if (detectedSsot) {
+      const useSsot = await p.confirm({
+        message: `Found shared content source at ${detectedSsot}. Link it for cross-project sync?`,
+        initialValue: true,
+      });
+      if (isCancelled(useSsot)) return null;
+
+      if (useSsot) {
+        config.content_sources = [{ type: "local", path: detectedSsot }];
+      }
     }
   }
 

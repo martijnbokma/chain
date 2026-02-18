@@ -93,17 +93,115 @@ bun run build
 bun run test:run  # Verify everything works
 ```
 
-## Quick Start: Forge Your Chain in 3 Steps
+## Quick Start: 3 Simple Steps
 
+### **Step 1: Install Chain**
 ```bash
-# 1. Install and initiate the connection
 npm install @silverfox14/chain
+# or
+bun add @silverfox14/chain
+```
+
+### **Step 2: Configure & Initialize**
+```bash
+npx @silverfox14/chain init
+# or
+bunx @silverfox14/chain init
+```
+
+The wizard will ask you:
+- ✅ Which AI editors you use (Cursor, Windsurf, Claude, etc.)
+- ✅ Your tech stack (React, Node.js, Python, etc.)
+- 🔄 **NEW: Share skills across multiple projects?** (Creates shared content hub)
+
+**Cross-Project Sync Option:**
+- **Yes**: Creates a shared content hub (default: `~/.chain-shared`)
+- **No**: Each project has its own content
+
+**Benefits of Shared Content:**
+- 🎯 **One place to update** skills/rules
+- 🔄 **Auto-sync across all projects**  
+- 📈 **Consistent AI behavior** everywhere
+- 👥 **Perfect for teams** and multi-project workflows
+
+### **Step 3: Sync to Your Editors**
+```bash
+npx @silverfox14/chain sync
+# or  
+bunx @silverfox14/chain sync
+```
+
+**🎉 That's it! Your AI editors now have shared rules, skills, and workflows.**
+
+---
+
+## 🚀 Using Chain in Your Project
+
+**After installing `@silverfox14/chain`, you have several ways to use it:**
+
+### **🎯 Method 1: Direct Usage (Easiest - No Setup Needed)**
+```bash
+# Install and use immediately
+npm install @silverfox14/chain
+npx @silverfox14/chain menu
+npx @silverfox14/chain sync
+npx @silverfox14/chain watch
+```
+
+### **⚡ Method 2: Add Scripts (Recommended for Daily Use)**
+
+**Add these scripts to your project's `package.json`:**
+
+```json
+{
+  "scripts": {
+    "chain:menu": "@silverfox14/chain menu",
+    "chain:sync": "@silverfox14/chain sync", 
+    "chain:watch": "@silverfox14/chain watch",
+    "chain:validate": "@silverfox14/chain validate",
+    "chain:smart-sync": "@silverfox14/chain smart-sync",
+    "chain:performance": "@silverfox14/chain performance"
+  }
+}
+```
+
+**Now you can simply run:**
+```bash
+npm run chain:menu      # Open interactive menu
+npm run chain:sync      # Sync to all editors
+npm run chain:watch     # Auto-sync on changes
+```
+
+### **🌍 Method 3: Global Installation (Use Anywhere)**
+```bash
+npm install -g @silverfox14/chain
+# Then use from any directory:
+chain menu
+chain sync
+chain watch
+```
+
+---
+
+## 💡 Quick Start Summary
+
+**For beginners - just run these 3 commands:**
+```bash
+# 1. Install
+npm install @silverfox14/chain
+
+# 2. Initialize (choose shared content for multi-project sync)
 npx @silverfox14/chain init
 
-# 2. Craft your content in .chain/ and fine-tune chain.yaml
+# 3. Open menu
+npx @silverfox14/chain menu
+```
 
-# 3. Strengthen all connections
-npx @silverfox14/chain sync
+**For multi-project workflows:**
+```bash
+# During init, choose "Yes" for sharing across projects
+# Your shared hub will be created at ~/.chain-shared
+# All projects will automatically use the same skills/rules
 ```
 
 **Pro tip:** Add this alias to your shell for easier usage:
@@ -113,6 +211,41 @@ source ~/.zshrc
 ```
 
 That's it. The wizard forges your initial chain with minimal questions, auto-detecting your tech stack and establishing connections to your chosen editors.
+
+## 🔄 Share Your Chain Across Projects
+
+**Want to use the same AI rules, skills, and workflows across multiple projects?** Chain makes it easy:
+
+### **Quickest Setup - Shared Local Hub**
+```bash
+# 1. Create your shared content hub (one-time setup)
+mkdir ~/.chain-hub
+cd ~/.chain-hub
+npx @silverfox14/chain init
+# Add your custom skills, rules, workflows here
+
+# 2. Use in any project
+cd your-project
+echo "content_sources:
+  - type: local
+    path: ~/.chain-hub" > chain.yaml
+npx @silverfox14/chain sync
+```
+
+### **Team Collaboration - Git Repository**
+```bash
+# 1. Create shared repo
+git clone https://github.com/yourteam/ai-rules.git ~/ai-rules
+cd ~/ai-rules
+npx @silverfox14/chain init
+
+# 2. Use in projects
+content_sources:
+  - type: local
+    path: ~/ai-rules
+```
+
+**📖 See [Cross-Project Setup](#cross-project-chain-network) below for advanced options.**
 
 For teams building interconnected project ecosystems:
 

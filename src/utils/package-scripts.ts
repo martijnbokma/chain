@@ -2,9 +2,9 @@ import { join } from 'path';
 import { writeTextFile, fileExists, readTextFile } from './file-ops.js';
 
 const SYNC_SCRIPTS: Record<string, string> = {
-  sync: 'ai-toolkit sync',
-  'sync:dry': 'ai-toolkit sync --dry-run',
-  'sync:watch': 'ai-toolkit watch',
+  sync: '@silverfox14/chain sync',
+  'sync:dry': '@silverfox14/chain sync --dry-run',
+  'sync:watch': '@silverfox14/chain watch',
 };
 
 export async function addSyncScripts(projectRoot: string): Promise<boolean> {

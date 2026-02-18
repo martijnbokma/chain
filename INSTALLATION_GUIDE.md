@@ -245,80 +245,167 @@ pnpm add -g chain
 
 ---
 
-## 📋 Step-by-Step Setup
+## � Using Chain Across Multiple Projects
 
-### Step 1: Navigate to Your Project
+**Want to share your AI rules, skills, and workflows between projects?** Here's how:
 
-**🎯 What you need to do:**
-Open your terminal and navigate to the folder where your project is located.
-
-```bash
-# Example: go to your project folder
-cd /Users/yourname/projects/my-project
-
-# Or if you're on Windows
-cd C:\Users\yourname\projects\my-project
-```
-
-**✅ Check:** You should be in the main folder of your project (where `package.json` is located).
-
-**❓ How do you know you're in the right place?**
-```bash
-ls  # or dir on Windows
-# You should see package.json (if you have a Node.js project)
-```
-
-### Step 2: Clone and Setup Chain
-
-**🎯 What you need to do:**
-Run these commands in your terminal:
+### **Method 1: Shared Local Hub (Easiest)**
 
 ```bash
-# Clone Chain to your project
-git clone https://github.com/martijnbokma/chain.git chain-tools
+# Step 1: Create your shared hub (one-time setup)
+mkdir ~/.chain-shared
+cd ~/.chain-shared
+npx @silverfox14/chain init
+# Add your custom skills and rules here
 
-# Install dependencies
-cd chain-tools
-bun install
-
-# Build Chain
-bun run build
-
-# Go back to your project
-cd ..
-
-# Create shell alias for easy use
-echo 'alias chain="bun run chain"' >> ~/.zshrc
-source ~/.zshrc
-
-# Initialize Chain in your project
-bun run chain init
+# Step 2: Use in any project
+cd my-project
+echo "content_sources:
+  - type: local
+    path: ~/.chain-shared" > chain.yaml
+npx @silverfox14/chain sync
 ```
 
-**🤖 What happens (automatically!):**
-- Chain detects your technology (language, framework, database)
-- Chain asks which AI editors you want to connect
-- Chain creates the necessary files and folders
-- Chain sets up your initial configuration
-- Chain installs git hooks (if you use Git)
-- Adds helpful scripts to your project
-- Copies examples
-- Syncs with your AI editors
+### **Method 2: Git Repository (Teams)**
 
-**✅ Check:** You should see a success message with a list of created files.
+```bash
+# Step 1: Create shared repository
+git clone https://github.com/yourteam/ai-content.git ~/ai-content
+cd ~/ai-content
+npx @silverfox14/chain init
+# Commit your shared content
 
-**🎉 Example of what you'll see:**
-```
-🚀 chain setup
-✓ Created: chain.yaml — project configuration
-✓ Created: .chain/PROJECT.md — project context
-✓ Created: .chain/rules/ — project rules
-✓ Created: .chain/skills/ — AI skills/commands
-✓ Synced 15 file(s) to editors
-Done! Your editors are ready.
+# Step 2: Use in projects
+content_sources:
+  - type: local
+    path: ~/ai-content
 ```
 
-### Step 3: Choose Your AI Editors
+### **Method 3: Symbolic Link (Quick & Dirty)**
+
+```bash
+# Create shared content
+mkdir ~/my-ai-rules
+cd ~/my-ai-rules
+npx @silverfox14/chain init
+
+# Link in projects
+cd my-project
+ln -s ~/my-ai-rules/.chain .chain
+```
+
+**📖 For detailed setup instructions, see the [Cross-Project Setup Guide](README.md#cross-project-chain-network).**
+
+---
+
+## ⚡ Add Chain Scripts to Your Project
+
+**Make Chain even easier to use by adding scripts to your `package.json`:**
+
+```json
+{
+  "scripts": {
+    "chain:init": "@silverfox14/chain init",
+    "chain:sync": "@silverfox14/chain sync",
+    "chain:watch": "@silverfox14/chain watch", 
+    "chain:validate": "@silverfox14/chain validate",
+    "chain:menu": "@silverfox14/chain menu",
+    "chain:smart-sync": "@silverfox14/chain smart-sync",
+    "chain:performance": "@silverfox14/chain performance",
+    "chain:realtime-sync": "@silverfox14/chain realtime-sync",
+    "chain:improve-prompts": "@silverfox14/chain improve-prompts"
+  }
+}
+```
+
+**Now you can run:**
+```bash
+npm run chain:sync           # Sync all editors
+npm run chain:watch          # Auto-sync on file changes  
+npm run chain:validate       # Check if everything is OK
+npm run chain:menu           # Open interactive menu
+npm run chain:smart-sync     # Smart sync with AI assistance
+npm run chain:performance    # Analyze performance
+npm run chain:realtime-sync  # Monitor real-time changes
+```
+
+**Or with Bun:**
+```bash
+bun run chain:sync
+bun run chain:watch
+bun run chain:menu
+bun run chain:smart-sync
+```
+
+### **Popular Commands:**
+- `npm run chain:menu` - **Interactive menu** for all operations
+- `npm run chain:smart-sync` - **AI-powered sync** with conflict resolution
+- `npm run chain:performance` - **Analyze sync performance**
+- `npm run chain:realtime-sync` - **Live sync monitoring**
+
+---
+
+
+---
+
+## 📚 What Happens During Setup?
+
+**When you run `npx @silverfox14/chain init`, Chain automatically:**
+
+✅ **Detects your tech stack** - Language, framework, database  
+✅ **Asks about your AI editors** - Cursor, Windsurf, Claude, etc.  
+✅ **Creates configuration files** - `chain.yaml`, `.chain/` directory  
+✅ **Sets up git hooks** - Auto-sync on commits  
+✅ **Generates starter content** - Rules, skills, workflows  
+✅ **Syncs to your editors** - Creates `.cursorrules`, `CLAUDE.md`, etc.  
+
+**You'll see output like:**
+```
+🚀 chain setup complete!
+✅ Created .chain/ directory
+✅ Generated 15 skills  
+✅ Synced to 3 editors
+🎉 Your AI editors are ready!
+```
+
+---
+
+## 🎯 Next Steps
+
+**After setup, you can:**
+
+### **Customize Your Content**
+```bash
+# Edit your rules and skills
+code .chain/rules/project-conventions.md
+code .chain/skills/code-review.md
+
+# Re-sync after changes
+npx @silverfox14/chain sync
+```
+
+### **Add to Multiple Projects**
+```bash
+# In each new project
+echo "content_sources:
+  - type: local
+    path: ~/.chain-shared" > chain.yaml
+npx @silverfox14/chain sync
+```
+
+### **Use in Your Workflow**
+```bash
+# Auto-sync while working
+npx @silverfox14/chain watch
+
+# Validate configuration
+npx @silverfox14/chain validate
+
+# Get help
+npx @silverfox14/chain --help
+```
+
+---
 
 **🎯 What you need to do:**
 The installation wizard will ask which AI editors you use. Choose the editors you have:
