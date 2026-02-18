@@ -341,9 +341,8 @@ export class SmartSyncEngine {
             ]) as any;
             
             const resolutionOptions: ConflictResolutionOptions = {
-              strategy: options.resolveConflicts === 'source' ? 'auto' : 
-                        options.resolveConflicts === 'target' ? 'auto' : 'ai-assisted',
-              preferLocal: options.resolveConflicts === 'source',
+              strategy: (options.resolveConflicts as any === 'source' || options.resolveConflicts as any === 'target') ? 'auto' : 'ai-assisted',
+              preferLocal: options.resolveConflicts as any === 'source',
               interactive: options.resolveConflicts === 'prompt'
             };
 
@@ -388,7 +387,7 @@ export class SmartSyncEngine {
       try {
         await this.saveMetadata();
         if (this.fileWatcher) {
-          await this.fileWatcher.close();
+          await this.fileWatcher.stopAll();
         }
       } catch (cleanupError) {
         log.warn(`Cleanup warning: ${cleanupError}`);

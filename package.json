@@ -1,5 +1,5 @@
 {
-  "name": "@martijnbokma/chain",
+  "name": "@silverfox14/ai-chain",
   "version": "0.1.0",
   "description": "Universal AI chain — sync rules, skills, and workflows to all AI editors from a single source of truth",
   "type": "module",
