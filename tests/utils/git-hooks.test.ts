@@ -8,7 +8,7 @@ describe('installPreCommitHook', () => {
   let testDir: string;
 
   beforeEach(async () => {
-    testDir = await mkdtemp(join(tmpdir(), 'ai-toolkit-hooks-'));
+    testDir = await mkdtemp(join(tmpdir(), 'chain-hooks-'));
   });
 
   afterEach(async () => {
@@ -27,22 +27,22 @@ describe('installPreCommitHook', () => {
     expect(result).toBe(true);
 
     const hook = await readFile(join(testDir, '.git', 'hooks', 'pre-commit'), 'utf-8');
-    expect(hook).toContain('ai-toolkit');
+    expect(hook).toContain('@silverfox14/chain');
     expect(hook).toContain('#!/bin/sh');
   });
 
-  it('should return false when hook already contains ai-toolkit', async () => {
+  it('should return false when hook already contains @silverfox14/chain', async () => {
     await mkdir(join(testDir, '.git', 'hooks'), { recursive: true });
     await writeFile(
       join(testDir, '.git', 'hooks', 'pre-commit'),
-      '#!/bin/sh\n# ai-toolkit: existing hook\n',
+      '#!/bin/sh\n# @silverfox14/chain: existing hook\n',
     );
 
     const result = await installPreCommitHook(testDir);
     expect(result).toBe(false);
   });
 
-  it('should append to existing hook that does not contain ai-toolkit', async () => {
+  it('should append to existing hook that does not contain @silverfox14/chain', async () => {
     await mkdir(join(testDir, '.git', 'hooks'), { recursive: true });
     await writeFile(
       join(testDir, '.git', 'hooks', 'pre-commit'),
@@ -54,6 +54,6 @@ describe('installPreCommitHook', () => {
 
     const hook = await readFile(join(testDir, '.git', 'hooks', 'pre-commit'), 'utf-8');
     expect(hook).toContain('existing hook');
-    expect(hook).toContain('ai-toolkit');
+    expect(hook).toContain('@silverfox14/chain');
   });
 });

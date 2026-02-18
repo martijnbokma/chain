@@ -241,7 +241,7 @@ describe('Editor Adapters — specific adapters', () => {
     expect(windsurf.entryPoint).toBe('.windsurfrules');
 
     const fm = windsurf.generateFrontmatter!('test');
-    expect(fm).toContain('Auto-synced by ai-toolkit');
+    expect(fm).toContain('Auto-synced by @silverfox14/chain');
   });
 
   it('kiro should have correct directories', () => {
