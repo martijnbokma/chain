@@ -1,0 +1,23 @@
+version: "1.0"
+editors:
+  cursor: true
+  windsurf: true
+  claude: true
+  kiro: false
+  trae: false
+  gemini: false
+metadata:
+  name: "chain"
+  description: "Universal AI chain — sync rules, skills, and workflows to 14 AI editors from a single source of truth"
+tech_stack:
+  language: typescript
+  framework: bun
+  runtime: node
+
+# 🔄 Content sources (optional - add via `chain init --advanced`)
+# content_sources:
+#   - type: local
+#     path: ~/.chain
+#     include: [rules, skills, workflows]
+#   - type: package
+#     name: "@myorg/ai-rules"
