@@ -100,36 +100,68 @@ Choose the editor you use. Chain works with these editors:
 
 ## Installation Methods
 
-### 🚀 Method 1: Quick Clone (Recommended for beginners)
+### 🚀 Method 1: npm Package (Recommended for all users)
 
-**Perfect for getting started immediately!** Clone and use directly:
+**Perfect for production use!** Install from the official npm registry:
 
 ```bash
-# Clone to your project folder
-git clone https://github.com/martijnbokma/chain.git my-project
-cd my-project
+# Install the package
+npm install @silverfox14/chain
 
-# Install dependencies and build
-bun install
-bun run build
+# Initialize in your project
+npx @silverfox14/chain init
 
-# Start using Chain
-bun run chain init
+# Sync to all AI editors
+npx @silverfox14/chain sync
 ```
 
 **✅ Advantages**: 
-- No installation required
-- Works immediately
-- No package manager confusion
-- Latest features included
-- Perfect for beginners
+- Official npm package
+- Small download size
+- Version management
+- Works with any Node.js project
+- Regular updates
 
 **⚠️ Disadvantages**: 
-- Includes full source code (larger download)
+- Requires npm/yarn/bun
 
-**� When to use?**: This is the recommended method for most users, especially beginners.
+**🎯 When to use?**: This is the recommended method for most users and production projects.
 
-### 🔧 Method 3: Local Development (For contributors)
+### 🔧 Method 2: Bun Package (Bun users)
+
+**Perfect for Bun users!** Install using Bun package manager:
+
+```bash
+# Install the package
+bun add @silverfox14/chain
+
+# Initialize in your project
+bunx @silverfox14/chain init
+
+# Sync to all AI editors
+bunx @silverfox14/chain sync
+```
+
+**✅ Advantages**: 
+- Fast installation with Bun
+- Optimized for Bun projects
+- Same features as npm version
+
+### 🔧 Method 3: Global Installation (CLI tool)
+
+**Perfect for using Chain as a system-wide tool!**
+
+```bash
+# Install globally
+npm install -g @silverfox14/chain
+
+# Use from anywhere
+chain init
+chain sync
+chain watch
+```
+
+### 🔧 Method 4: Local Development (For contributors)
 
 **Perfect for development and testing!** Use it directly from your local copy:
 
@@ -161,24 +193,24 @@ source ~/.zshrc
 
 **💡 When to use?**: Use this method when you're developing Chain or want to test the latest features.
 
-### 👥 Method 4: Project Installation (For teams)
+### 👥 Method 5: Project Installation (For teams)
 
-Install as part of your project using GitHub source:
+Install as part of your project using the npm package:
 
 ```bash
 # With Bun
-bun add -D github:martijnbokma/chain
+bun add -D @silverfox14/chain
 
 # With npm
-npm install -D github:martijnbokma/chain
+npm install -D @silverfox14/chain
 
 # With pnpm
-pnpm add -D github:martijnbokma/chain
+pnpm add -D @silverfox14/chain
 
 # Then use in your project
-bun run chain init
-npm run chain init
-pnpm chain init
+npx @silverfox14/chain init
+bunx @silverfox14/chain init
+pnpm dlx @silverfox14/chain init
 ```
 
 **✅ Advantages**: 

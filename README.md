@@ -46,32 +46,40 @@ Built with TypeScript precision and tested across 424+ test cases, Chain is the 
 
 ## Installation
 
-### 🚀 Quick Start (Recommended)
+### 🚀 npm Package (Recommended)
 
 ```bash
-# Clone and setup instantly
-git clone https://github.com/martijnbokma/chain.git my-project
-cd my-project
-bun install
-bun run build
-bun run chain init
+# Install with npm
+npm install @silverfox14/chain
+npx @silverfox14/chain init
+npx @silverfox14/chain sync
+
+# Install with Bun (faster)
+bun add @silverfox14/chain
+bunx @silverfox14/chain init
+bunx @silverfox14/chain sync
+
+# Install with pnpm
+pnpm add @silverfox14/chain
+pnpm dlx @silverfox14/chain init
+pnpm dlx @silverfox14/chain sync
 ```
 
-### 📦 Alternative Methods
+### 📦 Alternative Installation Methods
 
 ```bash
-# Method 1: Use bunx (no installation)
-bunx github:martijnbokma/chain@latest init
+# Method 1: Global installation
+npm install -g @silverfox14/chain
+# or
+bun add -g @silverfox14/chain
 
-# Method 2: Install as dev dependency
-bun add -D github:martijnbokma/chain
-bun run chain init
+# Use from anywhere
+chain init
+chain sync
 
-# Method 3: Manual setup
-git clone https://github.com/martijnbokma/chain.git
-cd chain
-bun install
-bun run build
+# Method 2: Direct usage (no install)
+npx @silverfox14/chain init
+bunx @silverfox14/chain init
 ```
 
 ### 🔧 Development Setup
@@ -88,18 +96,19 @@ bun run test:run  # Verify everything works
 ## Quick Start: Forge Your Chain in 3 Steps
 
 ```bash
-# 1. Initiate the connection (auto-detects your tech stack, asks for editors)
-bun run chain init
+# 1. Install and initiate the connection
+npm install @silverfox14/chain
+npx @silverfox14/chain init
 
 # 2. Craft your content in .chain/ and fine-tune chain.yaml
 
 # 3. Strengthen all connections
-bun run chain sync
+npx @silverfox14/chain sync
 ```
 
 **Pro tip:** Add this alias to your shell for easier usage:
 ```bash
-echo 'alias chain="bun run chain"' >> ~/.zshrc
+echo 'alias chain="npx @silverfox14/chain"' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -108,7 +117,7 @@ That's it. The wizard forges your initial chain with minimal questions, auto-det
 For teams building interconnected project ecosystems:
 
 ```bash
-bun run chain init --advanced
+npx @silverfox14/chain init --advanced
 ```
 
 ## Your Chain Architecture
@@ -338,18 +347,18 @@ content_sources:
 
 | Command | Description |
 |---|---|
-| `chain init` | Forge your initial chain (auto-detects tech stack, quick setup) |
-| `chain init --advanced` | Master forge wizard with content sources and detailed tech stack |
-| `chain init --force` | Re-forge (overwrites existing chain) |
-| `chain init --shared` | Create shared content hub for cross-project sync |
-| `chain sync` | Strengthen all connections to enabled editors |
-| `chain sync --dry-run` | Preview chain strengthening before execution |
-| `chain validate` | Verify chain integrity and content |
-| `chain watch` | Eternal watch mode - auto-sync on every change |
-| `chain sync-all` | Conquer entire monorepo forests |
-| `chain sync-all --dry-run` | Preview monorepo conquest |
-| `chain promote <file>` | Promote local content to shared hub |
-| `chain promote <file> --force` | Force promotion to shared hub |
+| `npx @silverfox14/chain init` | Forge your initial chain (auto-detects tech stack, quick setup) |
+| `npx @silverfox14/chain init --advanced` | Master forge wizard with content sources and detailed tech stack |
+| `npx @silverfox14/chain init --force` | Re-forge (overwrites existing chain) |
+| `npx @silverfox14/chain init --shared` | Create shared content hub for cross-project sync |
+| `npx @silverfox14/chain sync` | Strengthen all connections to enabled editors |
+| `npx @silverfox14/chain sync --dry-run` | Preview chain strengthening before execution |
+| `npx @silverfox14/chain validate` | Verify chain integrity and content |
+| `npx @silverfox14/chain watch` | Eternal watch mode - auto-sync on every change |
+| `npx @silverfox14/chain sync-all` | Conquer entire monorepo forests |
+| `npx @silverfox14/chain sync-all --dry-run` | Preview monorepo conquest |
+| `npx @silverfox14/chain promote <file>` | Promote local content to shared hub |
+| `npx @silverfox14/chain promote <file> --force` | Force promotion to shared hub |
 
 ## CI/CD Integration: Automated Chain Strength
 
@@ -358,9 +367,10 @@ content_sources:
 ```json
 {
   "scripts": {
-    "sync": "chain sync",
-    "sync:dry": "chain sync --dry-run",
-    "sync:watch": "chain watch"
+    "chain:init": "@silverfox14/chain init",
+    "chain:sync": "@silverfox14/chain sync",
+    "chain:dry": "@silverfox14/chain sync --dry-run",
+    "chain:watch": "@silverfox14/chain watch"
   }
 }
 ```
@@ -378,13 +388,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: oven-sh/setup-bun@v2
-      - run: bun install
-      - run: chain sync
+      - run: npm install @silverfox14/chain
+      - run: npx @silverfox14/chain sync
       - name: Verify chain integrity
         run: |
           if [[ -n $(git status --porcelain) ]]; then
             echo "::error::Chain is out of sync!"
-            echo "Run 'chain sync' and commit the changes."
+            echo "Run 'npx @silverfox14/chain sync' and commit the changes."
             exit 1
           fi
 ```

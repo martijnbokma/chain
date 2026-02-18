@@ -1,5 +1,5 @@
 {
-  "name": "@silverfox14/ai-chain",
+  "name": "@silverfox14/chain",
   "version": "0.1.0",
   "description": "Universal AI chain — sync rules, skills, and workflows to all AI editors from a single source of truth",
   "type": "module",
@@ -20,6 +20,9 @@
   },
   "homepage": "https://github.com/martijnbokma/chain#readme",
   "scripts": {
+    "chain:init": "chain init",
+    "chain:sync": "chain sync", 
+    "chain:watch": "chain watch",
     "build": "tsup",
     "dev": "tsup --watch",
     "start": "bun src/cli/index.ts",

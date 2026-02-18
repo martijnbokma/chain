@@ -25,33 +25,53 @@
 
 ## Installation
 
-### Option 1: Run directly (recommended — no install needed)
+### Option 1: npm Package (recommended)
 
 ```bash
-bunx chain init
-bunx chain sync
+npm install @silverfox14/chain
+npx @silverfox14/chain init
+npx @silverfox14/chain sync
 
-# Or with npx
-npx chain init
+# Or with Bun
+bun add @silverfox14/chain
+bunx @silverfox14/chain init
+bunx @silverfox14/chain sync
 ```
 
-### Option 2: As devDependency (for teams)
+### Option 2: Run directly (no install needed)
 
 ```bash
-bun add -d chain
+npx @silverfox14/chain init
+npx @silverfox14/chain sync
+
+# Or with Bun
+bunx @silverfox14/chain init
+bunx @silverfox14/chain sync
+```
+
+### Option 3: As devDependency (for teams)
+
+```bash
+bun add -D @silverfox14/chain
 
 # Or with npm/pnpm
-npm install -D chain
-pnpm add -D chain
+npm install -D @silverfox14/chain
+pnpm add -D @silverfox14/chain
 ```
 
-### Option 3: Install globally
+### Option 4: Install globally
 
 ```bash
-bun add -g chain
+npm install -g @silverfox14/chain
+# or
+bun add -g @silverfox14/chain
+
+# Use from anywhere
+chain init
+chain sync
 ```
 
-### Option 4: Link locally (for development)
+### Option 5: Link locally (for development)
 
 If the package is not yet on npm, or you want to test a local version:
 
