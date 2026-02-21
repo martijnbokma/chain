@@ -14,6 +14,11 @@ interface ResolvedContent {
   workflows: ContentFile[];
 }
 
+export interface ResolveContentSourcesOptions {
+  /** When true, suppresses log output (e.g. for MCP server stdio mode) */
+  silent?: boolean;
+}
+
 /**
  * Resolves content from external sources (local paths or npm packages).
  * Merges them with the project's .chain/ files.
@@ -21,7 +26,9 @@ interface ResolvedContent {
 export async function resolveContentSources(
   projectRoot: string,
   sources: ContentSource[],
+  options: ResolveContentSourcesOptions = {},
 ): Promise<ResolvedContent> {
+  const { silent = false } = options;
   const result: ResolvedContent = {
     rules: [],
     skills: [],
@@ -30,9 +37,11 @@ export async function resolveContentSources(
 
   for (const source of sources) {
     try {
-      const sourceRoot = await resolveSourcePath(projectRoot, source);
+      const sourceRoot = await resolveSourcePath(projectRoot, source, { silent });
       if (!sourceRoot) {
-        log.warn(`Content source not found: ${source.type === 'local' ? source.path : source.name}`);
+        if (!silent) {
+          log.warn(`Content source not found: ${source.type === 'local' ? source.path : source.name}`);
+        }
         continue;
       }
 
@@ -48,14 +57,18 @@ export async function resolveContentSources(
 
         const files = await findMarkdownFiles(contentDir, contentDir);
         if (files.length > 0) {
-          log.info(`${label}: found ${files.length} ${category}`);
+          if (!silent) {
+            log.info(`${label}: found ${files.length} ${category}`);
+          }
           result[category].push(...files);
         }
       }
     } catch (error) {
-      log.error(
-        `Failed to resolve content source: ${error instanceof Error ? error.message : error}`,
-      );
+      if (!silent) {
+        log.error(
+          `Failed to resolve content source: ${error instanceof Error ? error.message : error}`,
+        );
+      }
     }
   }
 
@@ -65,10 +78,13 @@ export async function resolveContentSources(
 export async function resolveSourcePath(
   projectRoot: string,
   source: ContentSource,
+  options: { silent?: boolean } = {},
 ): Promise<string | null> {
+  const { silent = false } = options;
+
   if (source.type === 'local') {
     if (!source.path) {
-      log.error('Local content source requires a "path" field');
+      if (!silent) log.error('Local content source requires a "path" field');
       return null;
     }
 
@@ -97,17 +113,22 @@ export async function resolveSourcePath(
 
   if (source.type === 'package') {
     if (!source.name) {
-      log.error('Package content source requires a "name" field');
+      if (!silent) log.error('Package content source requires a "name" field');
       return null;
     }
 
-    return await resolvePackagePath(projectRoot, source.name);
+    return await resolvePackagePath(projectRoot, source.name, { silent });
   }
 
   return null;
 }
 
-async function resolvePackagePath(projectRoot: string, packageName: string): Promise<string | null> {
+async function resolvePackagePath(
+  projectRoot: string,
+  packageName: string,
+  options: { silent?: boolean } = {},
+): Promise<string | null> {
+  const { silent = false } = options;
   try {
     // Use createRequire from the project root to find the package
     const require = createRequire(join(projectRoot, 'package.json'));
@@ -126,7 +147,9 @@ async function resolvePackagePath(projectRoot: string, packageName: string): Pro
 
     return packageRoot;
   } catch {
-    log.warn(`Package "${packageName}" not found. Install it first: bun add -d ${packageName}`);
+    if (!silent) {
+      log.warn(`Package "${packageName}" not found. Install it first: bun add -d ${packageName}`);
+    }
     return null;
   }
 }

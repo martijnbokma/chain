@@ -19,6 +19,7 @@ import { realtimeSyncCommand } from "./realtime-sync.js";
 import { improvePromptsCommand } from "./improve-prompts.js";
 import { templatesSyncCommand } from "./templates-sync.js";
 import { fullMenuCommand } from "./full-menu.js";
+import { runMcpServer } from "../mcp-server/index.js";
 
 const program = new Command();
 
@@ -196,5 +197,12 @@ program.addCommand(improvePromptsCommand);
 
 // Add the menu command (complete with all scripts)
 program.addCommand(fullMenuCommand);
+
+program
+  .command("mcp-server")
+  .description("Start Chain MCP server (exposes rules, skills, workflows as prompts)")
+  .action(async () => {
+    await runMcpServer(process.cwd());
+  });
 
 program.parse();
