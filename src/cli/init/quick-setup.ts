@@ -1,4 +1,5 @@
 import { join, resolve, relative } from "path";
+import { homedir } from "os";
 import { createRequire } from "module";
 import * as p from "@clack/prompts";
 import type { ToolkitConfig } from "../../core/types.js";
@@ -125,7 +126,7 @@ export async function runQuickSetup(
     if (isCancelled(sharedPath)) return null;
 
     // Create shared directory if it doesn't exist
-    const expandedPath = sharedPath.replace(/^~/, require('os').homedir());
+    const expandedPath = sharedPath.replace(/^~/, homedir());
     const { ensureDir } = await import('../../utils/file-ops.js');
     await ensureDir(expandedPath);
 
