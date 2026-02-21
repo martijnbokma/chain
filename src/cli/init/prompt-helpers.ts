@@ -62,8 +62,8 @@ export async function selectOrCustom(
   if (selected === "__other__") {
     const custom = await p.text({
       message: `${message} (custom)`,
+      initialValue: isCustom ? defaultValue : undefined,
       placeholder: "Type your answer...",
-      defaultValue: isCustom ? defaultValue : undefined,
     });
     if (isCancelled(custom)) return null;
     return custom as string;
@@ -88,8 +88,8 @@ export async function askProjectName(
   const projectName = prev?.metadata?.name || dirName || "my-project";
   const name = await p.text({
     message: "Project name",
+    initialValue: projectName,
     placeholder: projectName,
-    defaultValue: projectName,
   });
   if (isCancelled(name)) return null;
   return name as string;

@@ -24,8 +24,8 @@ export async function runAdvancedSetup(
 
   const description = await p.text({
     message: "Description (optional)",
+    initialValue: prev.metadata?.description || "",
     placeholder: "A short description of your project",
-    defaultValue: prev.metadata?.description || "",
   });
   if (isCancelled(description)) return null;
 
@@ -86,9 +86,9 @@ export async function runAdvancedSetup(
     if (sourceType === "package") {
       const packageName = await p.text({
         message: "Package name",
-        placeholder: "@company/ai-rules",
-        defaultValue:
+        initialValue:
           prevSource?.type === "package" ? prevSource.name : undefined,
+        placeholder: "@company/ai-rules",
       });
       if (isCancelled(packageName)) return null;
       if (packageName) {
@@ -138,8 +138,8 @@ export async function runAdvancedSetup(
       if (localPath === "__custom__") {
         const custom = await p.text({
           message: "Custom path (relative to this project)",
+          initialValue: prevPath || undefined,
           placeholder: "../my-shared-rules",
-          defaultValue: prevPath || undefined,
         });
         if (isCancelled(custom)) return null;
         finalPath = custom as string;

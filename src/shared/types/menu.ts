@@ -33,10 +33,3 @@ export type MenuCategory =
   | 'improve'
   | 'manage';
 
-export type MenuAction = 'run' | 'preview' | 'configure';
-
-export interface MenuState {
-  selectedCategory?: string;
-  selectedOption?: string;
-  isRunning: boolean;
-}

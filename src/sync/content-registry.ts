@@ -2,46 +2,9 @@ import { readFile, writeFile, mkdir } from 'fs/promises';
 import { join, dirname } from 'path';
 import { createHash } from 'crypto';
 import { log } from '../utils/logger.js';
+import type { ContentMetadata, RegistryStats, ContentRelationship } from './content-registry-types.js';
 
-export interface ContentMetadata {
-  id: string; // SHA-256 of content
-  name: string;
-  path: string;
-  type: 'rule' | 'skill' | 'workflow';
-  category?: string;
-  tags: string[];
-  quality: {
-    score: number;
-    validated: Date;
-    issues: string[];
-  };
-  dependencies: string[]; // IDs of dependent content
-  dependents: string[]; // IDs of content that depends on this
-  version: number;
-  createdAt: Date;
-  updatedAt: Date;
-  lastSync?: Date;
-  syncTargets: string[]; // Editor paths where this is synced
-  source: 'local' | 'external' | 'template';
-  checksum: string; // For integrity verification
-}
-
-export interface RegistryStats {
-  totalItems: number;
-  byType: Record<string, number>;
-  byCategory: Record<string, number>;
-  averageQuality: number;
-  lastUpdated: Date;
-  conflicts: number;
-  orphans: number;
-}
-
-export interface ContentRelationship {
-  from: string;
-  to: string;
-  type: 'depends_on' | 'includes' | 'extends' | 'references';
-  strength: number; // 0-1, how strong the relationship is
-}
+export type { ContentMetadata, RegistryStats, ContentRelationship } from './content-registry-types.js';
 
 /**
  * Global Content Registry for centralized content management

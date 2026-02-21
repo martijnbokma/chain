@@ -120,8 +120,8 @@ export async function runQuickSetup(
   if (useSharedContent) {
     const sharedPath = await p.text({
       message: "Where should your shared content be stored?",
+      initialValue: "~/.chain-hub",
       placeholder: "~/.chain-hub",
-      defaultValue: "~/.chain-hub",
     });
     if (isCancelled(sharedPath)) return null;
 

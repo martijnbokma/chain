@@ -1,28 +1,9 @@
 import { readFile, stat } from 'fs/promises';
-import { join } from 'path';
 import { createHash } from 'crypto';
 import { log } from '../utils/logger.js';
+import type { PerformanceMetrics, CacheEntry, FileWatcher } from './performance-optimizer-types.js';
 
-export interface PerformanceMetrics {
-  filesProcessed: number;
-  totalTime: number;
-  averageTimePerFile: number;
-  cacheHits: number;
-  cacheMisses: number;
-  memoryUsage: {
-    used: number;
-    total: number;
-    percentage: number;
-  };
-}
-
-export interface CacheEntry {
-  content: string;
-  hash: string;
-  mtime: Date;
-  size: number;
-  lastAccessed: Date;
-}
+export type { PerformanceMetrics, CacheEntry } from './performance-optimizer-types.js';
 
 /**
  * Performance optimization utilities for sync operations
@@ -294,7 +275,7 @@ export class PerformanceOptimizer {
  * File watcher with debouncing and batch processing
  */
 export class SmartFileWatcher {
-  private watchers: Map<string, any> = new Map();
+  private watchers: Map<string, FileWatcher> = new Map();
   private changeQueue: Map<string, NodeJS.Timeout> = new Map();
   private onChange: (filePath: string) => void;
   private debounceDelay = 500; // 500ms debounce
@@ -314,17 +295,17 @@ export class SmartFileWatcher {
         ignored: /(^|[\/\\])\../, // ignore dotfiles
         persistent: true,
         ignoreInitial: true
-      });
+      }) as FileWatcher;
 
-      watcher.on('change', (filePath) => {
+      watcher.on('change', (filePath: string) => {
         this.handleFileChange(filePath);
       });
 
-      watcher.on('add', (filePath) => {
+      watcher.on('add', (filePath: string) => {
         this.handleFileChange(filePath);
       });
 
-      watcher.on('unlink', (filePath) => {
+      watcher.on('unlink', (filePath: string) => {
         this.handleFileChange(filePath);
       });
 

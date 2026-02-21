@@ -1,5 +1,6 @@
-import { join, resolve, isAbsolute } from 'path';
-import { createRequire } from 'module';
+import { join, resolve, isAbsolute } from "path";
+import { homedir } from "os";
+import { createRequire } from "module";
 import type { ContentSource, ContentFile } from '../core/types.js';
 import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR } from '../core/types.js';
 import { findMarkdownFiles, fileExists } from '../utils/file-ops.js';
@@ -71,9 +72,12 @@ export async function resolveSourcePath(
       return null;
     }
 
-    const resolved = isAbsolute(source.path)
-      ? source.path
-      : resolve(projectRoot, source.path);
+    const expandedPath = source.path.startsWith("~")
+      ? source.path.replace(/^~/, homedir())
+      : source.path;
+    const resolved = isAbsolute(expandedPath)
+      ? expandedPath
+      : resolve(projectRoot, expandedPath);
 
     const exists = await fileExists(resolved);
     if (!exists) return null;

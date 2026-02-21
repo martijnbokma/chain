@@ -1,34 +1,18 @@
 import { createHash } from 'crypto';
-import { readFile, writeFile } from 'fs/promises';
-import { join, basename } from 'path';
+import { readFile } from 'fs/promises';
+import { basename } from 'path';
 import { log } from '../utils/logger.js';
-import { readTextFile, writeTextFile } from '../utils/file-ops.js';
+import type {
+  ConflictDetails,
+  ConflictResolutionOptions,
+  MergeResult
+} from './ai-conflict-resolver-types.js';
 
-export interface ConflictDetails {
-  path: string;
-  localContent: string;
-  remoteContent: string;
-  baseContent?: string; // Common ancestor for 3-way merge
-  localHash: string;
-  remoteHash: string;
-  baseHash?: string;
-  changeType: 'both-modified' | 'content-conflict' | 'structural-conflict';
-}
-
-export interface MergeResult {
-  mergedContent: string;
-  conflicts: string[];
-  resolution: 'auto' | 'manual' | 'ai-assisted';
-  confidence: number; // 0-1
-  explanation: string;
-}
-
-export interface ConflictResolutionOptions {
-  strategy: 'auto' | 'manual' | 'ai-assisted';
-  preferLocal?: boolean;
-  preserveBoth?: boolean;
-  interactive?: boolean;
-}
+export type {
+  ConflictDetails,
+  ConflictResolutionOptions,
+  MergeResult
+} from './ai-conflict-resolver-types.js';
 
 /**
  * AI-powered conflict resolution with 3-way merge capabilities

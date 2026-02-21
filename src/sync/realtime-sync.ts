@@ -4,32 +4,19 @@ import { ContentRegistry } from './content-registry.js';
 import { SmartFileWatcher } from './performance-optimizer.js';
 import { log } from '../utils/logger.js';
 import { EventEmitter } from 'events';
+import type {
+  RealtimeSyncOptions,
+  RealtimeSyncStats,
+  SyncCompletedEvent,
+  SyncEvent
+} from './realtime-sync-types.js';
 
-export interface RealtimeSyncOptions {
-  sourceDir: string;
-  targetDir: string;
-  debounceDelay?: number;
-  autoResolve?: 'source' | 'target' | 'prompt';
-  enableAI?: boolean;
-  batchSize?: number;
-}
-
-export interface SyncEvent {
-  type: 'add' | 'update' | 'delete' | 'conflict';
-  filePath: string;
-  timestamp: Date;
-  details?: any;
-}
-
-export interface RealtimeSyncStats {
-  filesWatched: number;
-  eventsProcessed: number;
-  syncsPerformed: number;
-  conflictsResolved: number;
-  averageSyncTime: number;
-  uptime: number;
-  lastSync?: Date;
-}
+export type {
+  RealtimeSyncOptions,
+  RealtimeSyncStats,
+  SyncCompletedEvent,
+  SyncEvent
+} from './realtime-sync-types.js';
 
 /**
  * Real-time sync engine with file watching and instant synchronization
@@ -201,12 +188,13 @@ export class RealtimeSyncEngine extends EventEmitter {
       this.updateStats(duration);
 
       // Emit sync event
-      this.emit('sync', {
+      const syncEvent: SyncCompletedEvent = {
         type: 'sync',
         filePath,
         duration,
         result
-      });
+      };
+      this.emit('sync', syncEvent);
 
       log.info(`⚡ Sync completed: ${relative(this.projectRoot, filePath)} (${duration}ms)`);
 

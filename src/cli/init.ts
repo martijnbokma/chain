@@ -274,7 +274,7 @@ export async function runInit(
     if (writeProjectContext) {
       // Try rich auto-generation first, fall back to template
       try {
-        const analysis = await analyzeProject(projectRoot, finalConfig as any);
+        const analysis = await analyzeProject(projectRoot, finalConfig as ToolkitConfig);
         const richContext = generateRichProjectContext(analysis);
         await writeTextFile(projectContextPath, richContext);
       } catch {
