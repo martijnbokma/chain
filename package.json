@@ -1,6 +1,6 @@
 {
   "name": "@silverfox14/chain",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Universal AI chain — sync rules, skills, and workflows to all AI editors from a single source of truth",
   "type": "module",
   "main": "dist/index.js",
