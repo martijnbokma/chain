@@ -554,7 +554,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md#testing) for detailed forging instructions
 
 ## Documentation: Master the Chain
 
-See [docs/GUIDE.md](docs/GUIDE.md) for the complete chain mastery guide covering all features in exhaustive detail.
+- [docs/GUIDE.md](docs/GUIDE.md) — Complete chain mastery guide covering all features in exhaustive detail
+- [docs/PUBLISHING.md](docs/PUBLISHING.md) — How to publish Chain to the npm registry
 
 ## Contributing: Strengthen the Chain
 
