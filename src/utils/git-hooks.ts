@@ -12,7 +12,7 @@ else
   npx @silverfox14/chain sync
 fi
 
-git add .cursorrules .windsurfrules CLAUDE.md .cursor/ .windsurf/ .claude/ .kiro/ .trae/ .gemini/ .github/copilot-instructions.md AGENTS.md .aider* .roo/ .kilocode/ .antigravity/ .bolt/ .warp/ 2>/dev/null
+git add .cursor/ .claude/ .kiro/ .vscode/ .roo/ .kilocode/ .amazonq/ .editorconfig 2>/dev/null
 `;
 
 export async function installPreCommitHook(projectRoot: string): Promise<boolean> {

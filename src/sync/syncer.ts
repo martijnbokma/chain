@@ -1,4 +1,4 @@
-import { join, normalize } from 'path';
+import { join, normalize, relative } from 'path';
 import type { ToolkitConfig, SyncResult, SyncOptions } from '../core/types.js';
 import { CONTENT_DIR } from '../core/types.js';
 import { getEnabledAdapters } from '../editors/registry.js';
@@ -26,6 +26,12 @@ export async function runSync(
     pendingOrphans: [],
     ssotOrphans: [],
     ssotDiffs: [],
+    mcpConfigsUpdated: 0,
+    settingsUpdated: 0,
+    gitignoreUpdated: false,
+    mcpConfigPaths: [],
+    gitignorePaths: [],
+    settingsPaths: [],
   };
 
   const adapters = getEnabledAdapters(config);
@@ -49,19 +55,28 @@ export async function runSync(
   // 2. Generate MCP configs (only for adapters with mcpConfigPath)
   if (config.mcp_servers && config.mcp_servers.length > 0 && mcpAdapters.length > 0) {
     await generateMCPConfigs(projectRoot, mcpAdapters, config, result, dryRun);
+    result.mcpConfigsUpdated = mcpAdapters.length;
+    result.mcpConfigPaths = mcpAdapters.map((a) => a.mcpConfigPath!).filter(Boolean);
   }
 
   // 3. Sync editor settings (.editorconfig, .vscode/settings.json)
   if (config.settings) {
     const settingsFiles = await syncEditorSettings(projectRoot, config, dryRun);
     result.synced.push(...settingsFiles.map((f) => normalize(f)));
+    result.settingsUpdated = settingsFiles.length;
+    result.settingsPaths = settingsFiles.map((f) => relative(projectRoot, f));
   }
 
   // 4. Update .gitignore
-  if (!dryRun) {
-    await updateGitignore(projectRoot, mcpAdapters);
-  } else {
-    log.dryRun('would update', '.gitignore');
+  if (mcpAdapters.length > 0) {
+    result.gitignorePaths = mcpAdapters.map((a) => a.mcpConfigPath!).filter(Boolean).sort();
+    if (!dryRun) {
+      await updateGitignore(projectRoot, mcpAdapters);
+      result.gitignoreUpdated = true;
+    } else {
+      log.dryRun('would update', '.gitignore');
+      result.gitignoreUpdated = true;
+    }
   }
 
   return result;

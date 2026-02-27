@@ -165,6 +165,18 @@ export interface SyncResult {
   pendingOrphans: OrphanedFile[];
   ssotOrphans: SsotOrphan[];
   ssotDiffs: SsotDiff[];
+  /** MCP config files written (.cursor/mcp.json, etc.) */
+  mcpConfigsUpdated: number;
+  /** Editor settings files written (.editorconfig, .vscode/settings.json) */
+  settingsUpdated: number;
+  /** .gitignore was updated with managed paths */
+  gitignoreUpdated: boolean;
+  /** Relative paths of MCP configs written (for verbose output) */
+  mcpConfigPaths: string[];
+  /** Paths added to .gitignore managed block (for verbose output) */
+  gitignorePaths: string[];
+  /** Relative paths of editor settings written (for verbose output) */
+  settingsPaths: string[];
 }
 
 export interface ContentFile {

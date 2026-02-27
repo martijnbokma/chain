@@ -32,7 +32,45 @@ export async function runSyncCommand(
 
     log.info('');
     log.header(options.dryRun ? 'Dry-Run Summary' : 'Sync Summary');
-    log.success(`${options.dryRun ? 'Would sync' : 'Synced'}: ${result.synced.length} file(s)`);
+
+    const parts: string[] = [];
+    if (result.mcpConfigsUpdated > 0) {
+      parts.push(
+        options.dryRun
+          ? `MCP configs: would update ${result.mcpConfigsUpdated}`
+          : `MCP configs: ${result.mcpConfigsUpdated} updated`,
+      );
+    }
+    if (result.settingsUpdated > 0) {
+      parts.push(
+        options.dryRun
+          ? `Editor settings: would update ${result.settingsUpdated}`
+          : `Editor settings: ${result.settingsUpdated} updated`,
+      );
+    }
+    if (result.gitignoreUpdated) {
+      parts.push(options.dryRun ? '.gitignore: would update' : '.gitignore: updated');
+    }
+    if (parts.length > 0) {
+      for (const p of parts) {
+        log.success(p);
+      }
+      if (options.verbose) {
+        if (result.mcpConfigPaths.length > 0) {
+          log.dim('  MCP configs: ' + result.mcpConfigPaths.join(', '));
+        }
+        if (result.gitignorePaths.length > 0) {
+          log.dim('  .gitignore managed paths: ' + result.gitignorePaths.join(', '));
+        }
+        if (result.settingsPaths.length > 0) {
+          log.dim('  Editor settings: ' + result.settingsPaths.join(', '));
+        }
+      }
+    } else if (result.synced.length === 0 && result.removed.length === 0) {
+      log.success('✓ Configs up to date. Content in .chain/ is served live by MCP.');
+    } else {
+      log.success(`${options.dryRun ? 'Would sync' : 'Synced'}: ${result.synced.length} file(s)`);
+    }
 
     if (result.removed.length > 0) {
       log.warn(`Removed: ${result.removed.length} orphaned file(s)`);

@@ -61,7 +61,7 @@ export async function detectNearbySsot(projectRoot: string): Promise<string | nu
 export async function detectLinkedPackage(projectRoot: string): Promise<string | null> {
   try {
     const require = createRequire(join(projectRoot, "package.json"));
-    const packageJsonPath = require.resolve("chain/package.json");
+    const packageJsonPath = require.resolve("@silverfox14/chain/package.json");
     const packageRoot = resolve(packageJsonPath, "..");
 
     // Don't match the project itself

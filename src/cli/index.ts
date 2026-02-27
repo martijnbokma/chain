@@ -52,11 +52,13 @@ program
   .command("sync")
   .description("Sync rules, skills, and workflows to all enabled editors")
   .option("-n, --dry-run", "Preview changes without writing files", false)
+  .option("-v, --verbose", "Show exact paths that were updated", false)
   .option("-y, --yes", "Automatically answer yes to all prompts", false)
   .option("--auto-remove-orphans", "Automatically remove orphaned files", false)
   .action(async (options) => {
     await runSyncCommand(process.cwd(), { 
       dryRun: options.dryRun,
+      verbose: options.verbose,
       yes: options.yes,
       autoRemoveOrphans: options.autoRemoveOrphans
     });

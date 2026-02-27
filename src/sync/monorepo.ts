@@ -19,6 +19,12 @@ export async function runMonorepoSync(
     pendingOrphans: [],
     ssotOrphans: [],
     ssotDiffs: [],
+    mcpConfigsUpdated: 0,
+    settingsUpdated: 0,
+    gitignoreUpdated: false,
+    mcpConfigPaths: [],
+    gitignorePaths: [],
+    settingsPaths: [],
   };
 
   // 1. Sync root config
@@ -102,4 +108,10 @@ function mergeResults(target: SyncResult, source: SyncResult): void {
   target.errors.push(...source.errors);
   target.ssotOrphans.push(...source.ssotOrphans);
   target.ssotDiffs.push(...source.ssotDiffs);
+  target.mcpConfigsUpdated += source.mcpConfigsUpdated;
+  target.settingsUpdated += source.settingsUpdated;
+  target.gitignoreUpdated = target.gitignoreUpdated || source.gitignoreUpdated;
+  target.mcpConfigPaths.push(...source.mcpConfigPaths);
+  target.gitignorePaths = [...new Set([...target.gitignorePaths, ...source.gitignorePaths])];
+  target.settingsPaths.push(...source.settingsPaths);
 }

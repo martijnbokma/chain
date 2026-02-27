@@ -169,6 +169,15 @@ export async function askTechStackWithDetection(
   prev?: Partial<ToolkitConfig>,
   mode: "quick" | "advanced" = "quick",
 ): Promise<Record<string, string> | null> {
+  // Re-init: use existing tech stack without prompting
+  const prevStack = prev?.tech_stack;
+  const hasPrevStack =
+    prevStack &&
+    (prevStack.language || prevStack.framework || prevStack.database || prevStack.runtime);
+  if (hasPrevStack) {
+    return prevStack as Record<string, string>;
+  }
+
   const s = p.spinner();
   s.start("Detecting tech stack...");
   const detected = await detectStack(projectRoot);

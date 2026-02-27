@@ -535,11 +535,77 @@ content_sources:
 
 **Local content always wins.** If your project has a `code-style.md` in `.chain/rules/` and the external source also has one, the local version is used. This way you can override shared rules per project.
 
+### Keeping universal skills up to date
+
+To use the same skills across multiple projects and keep them in sync:
+
+#### 1. Create a shared hub
+
+```bash
+mkdir -p ~/.chain-hub/skills ~/.chain-hub/rules ~/.chain-hub/workflows
+```
+
+Or use `chain init --shared` to create `~/.chain/` as your hub.
+
+#### 2. Add the hub to each project
+
+In `chain.yaml` of every project:
+
+```yaml
+content_sources:
+  - type: local
+    path: ~/.chain-hub
+```
+
+During `chain init`, answer **Yes** to "Share your AI skills/rules across multiple projects?" and enter `~/.chain-hub`.
+
+#### 3. Edit in one place
+
+- Edit `~/.chain-hub/skills/css-tailwind.md` (or your hub path)
+- All projects get the change immediately — the MCP server reads the hub live
+- No sync needed for content changes
+
+#### 4. Version control (for teams)
+
+```bash
+cd ~/.chain-hub
+git init
+git add .
+git commit -m "Initial shared skills"
+git remote add origin https://github.com/yourorg/chain-hub.git
+git push
+```
+
+Team members: `git pull` in the hub to get updates. Changes are live in all projects.
+
+#### Workflow summary
+
+| Action | Where | Result |
+|--------|-------|--------|
+| Edit shared skill | `~/.chain-hub/skills/` | All projects see it immediately |
+| Edit project-specific skill | `.chain/skills/` | Overrides hub for this project only |
+| Add new shared skill | `~/.chain-hub/skills/` | Available in all projects |
+| Update hub (team) | `git pull` in hub | Everyone gets latest |
+
+See [CENTRAL_CONTENT_SETUP_GUIDE.md](./CENTRAL_CONTENT_SETUP_GUIDE.md) for more setup options (npm package, monorepo, etc.).
+
 ---
 
 ## MCP servers
 
 Chain is MCP-only: content is served via the Chain MCP server. `chain sync` generates MCP configs for enabled editors.
+
+### What does sync change?
+
+`chain sync` updates these files in your project:
+
+| File | What happens |
+|------|--------------|
+| `.cursor/mcp.json`, `.claude/settings.json`, etc. | MCP server configs (when `mcp_servers` is in chain.yaml) |
+| `.gitignore` | Adds a managed block with paths to ignore (MCP config paths) |
+| `.editorconfig`, `.vscode/settings.json` | Editor settings (when `settings:` is in chain.yaml) |
+
+Use `chain sync --verbose` to see exactly which paths were updated.
 
 | Editor | MCP config location |
 |--------|---------------------|
@@ -717,6 +783,7 @@ git add .cursor/ .claude/ .kiro/ .vscode/ .roo/ .kilocode/ .amazonq/
 | `chain init --force` | Reinitialize (overwrites existing config) |
 | `chain sync` | Generate MCP configs for enabled editors |
 | `chain sync --dry-run` | Preview which MCP configs would be generated |
+| `chain sync --verbose` | Show exact paths that were updated |
 | `chain validate` | Validate config and MCP server |
 | `chain watch` | Regenerate MCP configs on file changes |
 | `chain sync-all` | Sync all projects in a monorepo |

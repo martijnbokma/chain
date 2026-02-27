@@ -25,9 +25,9 @@ describe('addSyncScripts', () => {
     expect(result).toBe(true);
 
     const pkg = JSON.parse(await readFile(join(testDir, 'package.json'), 'utf-8'));
-    expect(pkg.scripts.sync).toBe('@silverfox14/chain sync');
-    expect(pkg.scripts['sync:dry']).toBe('@silverfox14/chain sync --dry-run');
-    expect(pkg.scripts['sync:watch']).toBe('@silverfox14/chain watch');
+    expect(pkg.scripts.sync).toBe('chain sync');
+    expect(pkg.scripts['sync:dry']).toBe('chain sync --dry-run');
+    expect(pkg.scripts['sync:watch']).toBe('chain watch');
     expect(pkg.scripts.dev).toBe('vite');
   });
 
@@ -54,7 +54,7 @@ describe('addSyncScripts', () => {
     expect(result).toBe(true);
 
     const pkg = JSON.parse(await readFile(join(testDir, 'package.json'), 'utf-8'));
-    expect(pkg.scripts.sync).toBe('@silverfox14/chain sync');
+    expect(pkg.scripts.sync).toBe('chain sync');
   });
 
   it('should return false for invalid package.json', async () => {
@@ -69,6 +69,6 @@ describe('addSyncScripts', () => {
     expect(result).toBe(true);
 
     const pkg = JSON.parse(await readFile(join(testDir, 'package.json'), 'utf-8'));
-    expect(pkg.scripts.sync).toBe('@silverfox14/chain sync');
+    expect(pkg.scripts.sync).toBe('chain sync');
   });
 });

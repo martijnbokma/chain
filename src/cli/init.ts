@@ -300,7 +300,7 @@ export async function runInit(
 
     const created = [
       `${CONFIG_FILENAME} — project configuration`,
-      `${CONTENT_DIR}/${PROJECT_CONTEXT_FILE} — project context (included in all entry points)`,
+      `${CONTENT_DIR}/${PROJECT_CONTEXT_FILE} — project context (served by MCP)`,
       `${CONTENT_DIR}/rules/ — project rules`,
       `${CONTENT_DIR}/skills/ — AI skills/commands`,
       `${CONTENT_DIR}/workflows/ — dev workflows`,
@@ -317,12 +317,20 @@ export async function runInit(
 
     p.note(created.join("\n"), "Created");
 
-    // Auto-run sync to generate editor files immediately
-    s.start("Syncing to editors...");
+    // Auto-run sync to generate MCP configs immediately
+    s.start("Generating MCP configs...");
     try {
       const config = await loadConfig(projectRoot);
       const syncResult = await runSync(projectRoot, config);
-      s.stop(`Synced ${syncResult.synced.length} file(s) to editors`);
+      const total =
+        syncResult.mcpConfigsUpdated +
+        (syncResult.gitignoreUpdated ? 1 : 0) +
+        syncResult.settingsUpdated;
+      s.stop(
+        total > 0
+          ? `Generated ${total} config(s)`
+          : "MCP configs up to date",
+      );
     } catch (syncError) {
       s.stop('Sync skipped — run "chain sync" manually');
       log.dim(
