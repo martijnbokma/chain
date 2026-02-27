@@ -1,49 +1,22 @@
 import type { EditorAdapter, ToolkitConfig, CustomEditorConfig } from '../core/types.js';
 import { AUTO_GENERATED_MARKER } from '../core/types.js';
 import { CursorAdapter } from './cursor.js';
-import { WindsurfAdapter } from './windsurf.js';
 import { ClaudeAdapter } from './claude.js';
 import { KiroAdapter } from './kiro.js';
-import { TraeAdapter } from './trae.js';
-import { GeminiAdapter } from './gemini.js';
 import { CopilotAdapter } from './copilot.js';
-import { CodexAdapter } from './codex.js';
-import { AiderAdapter } from './aider.js';
 import { RooAdapter } from './roo.js';
 import { KiloCodeAdapter } from './kilocode.js';
-import { AntigravityAdapter } from './antigravity.js';
-import { BoltAdapter } from './bolt.js';
-import { WarpAdapter } from './warp.js';
-import { ReplitAdapter } from './replit.js';
-import { ClineAdapter } from './cline.js';
 import { AmazonQAdapter } from './amazonq.js';
-import { JunieAdapter } from './junie.js';
-import { AugmentAdapter } from './augment.js';
-import { ZedAdapter } from './zed.js';
-import { ContinueAdapter } from './continue.js';
 
+/** MCP-only: only editors with mcpConfigPath (per-project MCP support) */
 const ALL_ADAPTERS: EditorAdapter[] = [
   new CursorAdapter(),
-  new WindsurfAdapter(),
   new ClaudeAdapter(),
   new KiroAdapter(),
-  new TraeAdapter(),
-  new GeminiAdapter(),
   new CopilotAdapter(),
-  new CodexAdapter(),
-  new AiderAdapter(),
   new RooAdapter(),
   new KiloCodeAdapter(),
-  new AntigravityAdapter(),
-  new BoltAdapter(),
-  new WarpAdapter(),
-  new ReplitAdapter(),
-  new ClineAdapter(),
   new AmazonQAdapter(),
-  new JunieAdapter(),
-  new AugmentAdapter(),
-  new ZedAdapter(),
-  new ContinueAdapter(),
 ];
 
 const adapterMap = new Map<string, EditorAdapter>(
@@ -106,12 +79,11 @@ export function getEnabledAdapters(config: ToolkitConfig): EditorAdapter[] {
   });
 }
 
+/** MCP-only: returns mcp config paths (no longer generating rules/skills dirs) */
 export function getAllEditorDirs(): string[] {
   const dirs: string[] = [];
   for (const adapter of ALL_ADAPTERS) {
-    dirs.push(adapter.directories.rules);
-    if (adapter.directories.skills) dirs.push(adapter.directories.skills);
-    if (adapter.directories.workflows) dirs.push(adapter.directories.workflows);
+    if (adapter.mcpConfigPath) dirs.push(adapter.mcpConfigPath);
   }
   return [...new Set(dirs)];
 }

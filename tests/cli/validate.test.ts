@@ -134,7 +134,11 @@ mcp_servers:
       join(testDir, 'chain.yaml'),
       `version: "1.0"
 editors:
-  aider: true
+  no-mcp-editor: true
+custom_editors:
+  - name: no-mcp-editor
+    rules_dir: .no-mcp/rules
+    file_naming: flat
 mcp_servers:
   - name: test-server
     command: node
@@ -147,7 +151,7 @@ mcp_servers:
     const runValidateCommand = await importCommand();
     await runValidateCommand(testDir);
 
-    // aider has no mcpConfigPath, so warning is logged but no exit
+    // custom_editor without mcp_config_path → warning logged, no exit
     expect(exitSpy).not.toHaveBeenCalled();
   });
 });

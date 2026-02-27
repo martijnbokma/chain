@@ -2,46 +2,37 @@
 
 **Break the silos. Forge the connection. Transform your AI development workflow.**
 
-> **One chain to rule them all.** Connect your rules, skills, and workflows across **20+ AI editors** with a single, unbreakable link.
+> **One chain to rule them all.** Connect your rules, skills, and workflows to MCP-capable AI editors via a single, unbreakable link.
 
 ## The Chain Revolution
 
-In the fragmented world of AI development, every editor speaks its own language. Rules get duplicated. Skills go missing. Workflows break. **Chain** is the missing link that creates a seamless connection across your entire AI ecosystem.
+In the fragmented world of AI development, every editor speaks its own language. Rules get duplicated. Skills go missing. **Chain** is the missing link — an MCP server that serves your `.chain/` content live to every connected editor.
 
-**Chain transforms chaos into harmony** — one source of truth that flows through every editor like a perfectly forged chain, ensuring consistency, eliminating duplication, and amplifying your development power.
+**Chain transforms chaos into harmony** — one source of truth (`.chain/`) served via the Model Context Protocol. No file sync, no duplication. Select prompts when you need them.
 
 ## Why Chain Changes Everything
 
-### 🚀 **Unbreakable Connection**
-Create a single, powerful link between your development standards and every AI editor. No more scattered rules, no more version conflicts — just pure, uninterrupted flow.
+### 🚀 **MCP-Only — One Simple Way**
+Content stays in `.chain/`. The Chain MCP server reads it live. No copying to editor-specific directories. Select `@chain_full_context` or `@chain_rules` when you need them.
 
-### ⚡ **Lightning-Fast Sync**
-With one command, watch as Chain instantly distributes your latest rules, skills, and workflows across your entire AI arsenal. Updates propagate at the speed of thought.
+### ⚡ **No Sync Needed**
+Edit `.chain/` and the MCP server serves the latest content immediately. Run `chain sync` only to regenerate MCP configs when you add editors or change settings.
 
 ### 🔗 **Forged in Steel**
-Built with TypeScript precision and tested across 424+ test cases, Chain is the unbreakable backbone your AI development workflow deserves.
+Built with TypeScript precision and tested across 380+ test cases, Chain is the unbreakable backbone your AI development workflow deserves.
 
 ## The Chain Experience
 
-- **🌐 Universal Adapter Network** — Seamlessly connect to 20+ AI editors: Cursor, Windsurf, Claude Code, Kiro, Trae, Gemini, Copilot, Codex, Aider, Roo, KiloCode, Antigravity, Bolt, Warp, Replit, Cline, Amazon Q, Junie, Augment, Zed, Continue
-- **⚙️ Single Source of Truth** — Your `.chain/` directory becomes the master forge where all rules, skills, and workflows are crafted once and distributed everywhere
-- **🎯 Intelligent Context Injection** — PROJECT.md automatically enriches every AI editor with deep project understanding
-- **🔧 Precision Overrides** — Fine-tune connections per editor while maintaining the golden chain of consistency
-- **🌟 Dynamic Entry Points** — Auto-generates `.cursorrules`, `.windsurfrules`, `CLAUDE.md`, `AGENTS.md`, and more
-- **🔌 MCP Integration** — Distributes Model Context Protocol servers across your connected editors
-- **🌲 Cross-Project Forest** — Plant your rules once and watch them grow across multiple projects
-- **🔄 Auto-Sync Intelligence** — Smart promotion, diff detection, and orphan cleanup keep your chain pristine
+- **🔌 MCP-First** — Chain MCP server exposes rules, skills, and workflows as prompts (chain_full_context, chain_rules, chain_skills, chain_workflows)
+- **🌐 MCP-Capable Editors** — Cursor, Claude Code, Kiro, GitHub Copilot, Roo, KiloCode, Amazon Q
+- **⚙️ Single Source of Truth** — Your `.chain/` directory is the master; the MCP server reads it live
+- **🎯 Intelligent Context** — PROJECT.md enriches prompts with deep project understanding
 - **🧠 Tech Stack Telepathy** — Automatically detects your language, framework, runtime, and database
 - **📚 Template Treasury** — 8 battle-tested stack templates ready to deploy
 - **🎨 Skill Arsenal** — 7+ core skills, 14 specialist roles, 4 workflow templates
-- **🔌 Extensible Architecture** — Plugin system for any editor, now or future
-- **👁️ Crystal Ball Mode** — Preview changes before they materialize
-- **👁️ Eternal Watch** — Auto-sync on every file change, keeping your chain ever-strong
-- **✅ Guardian Validation** — Pre-flight checks ensure your chain remains unbroken
+- **🌲 Cross-Project Forest** — Share content via `content_sources` across multiple projects
 - **🛠️ Smart Settings** — Auto-generates `.editorconfig` and `.vscode/settings.json`
-- **🧹 Intelligent Cleanup** — Removes broken links while preserving your valuable content
-- **🚫 Smart Git Integration** — Manages generated files intelligently
-- **⚡ Pre-Commit Power** — Auto-installs hooks that strengthen your chain before every commit
+- **✅ Guardian Validation** — Pre-flight checks ensure your chain remains unbroken
 - **🏗️ Monorepo Mastery** — Conquer entire code forests with `sync-all`
 
 ## Installation
@@ -110,28 +101,27 @@ bunx @silverfox14/chain init
 ```
 
 The wizard will ask you:
-- ✅ Which AI editors you use (Cursor, Windsurf, Claude, etc.)
+- ✅ Which MCP-capable editors you use (Cursor, Claude, Kiro, etc.)
 - ✅ Your tech stack (React, Node.js, Python, etc.)
-- 🔄 **NEW: Share skills across multiple projects?** (Creates shared content hub)
+- 🔄 Share skills across multiple projects? (Creates shared content hub)
 
-**Cross-Project Sync Option:**
-- **Yes**: Creates a shared content hub (default: `~/.chain-shared`)
-- **No**: Each project has its own content
+The Chain MCP server is added to `chain.yaml` automatically.
 
-**Benefits of Shared Content:**
-- 🎯 **One place to update** skills/rules
-- 🔄 **Auto-sync across all projects**  
-- 📈 **Consistent AI behavior** everywhere
-- 👥 **Perfect for teams** and multi-project workflows
-
-### **Step 3: Sync to Your Editors**
+### **Step 3: Sync MCP Configs**
 ```bash
 npx @silverfox14/chain sync
 # or  
 bunx @silverfox14/chain sync
 ```
 
-**🎉 That's it! Your AI editors now have shared rules, skills, and workflows.**
+This generates `.cursor/mcp.json`, `.claude/settings.json`, etc. with the Chain MCP server.
+
+### **Step 4: Use Prompts in Your Editor**
+Open your project in Cursor, Claude Code, or another MCP-capable editor. Select `@chain_full_context`, `@chain_rules`, `@chain_skills`, or `@chain_workflows` when you need them.
+
+**🎉 That's it! Content is served live from `.chain/` — no file sync needed.**
+
+> **Migrating from file sync?** See [docs/MIGRATION-MCP-ONLY.md](docs/MIGRATION-MCP-ONLY.md).
 
 ---
 
@@ -159,8 +149,7 @@ npx @silverfox14/chain watch
     "chain:sync": "@silverfox14/chain sync", 
     "chain:watch": "@silverfox14/chain watch",
     "chain:validate": "@silverfox14/chain validate",
-    "chain:smart-sync": "@silverfox14/chain smart-sync",
-    "chain:performance": "@silverfox14/chain performance"
+    "chain:validate": "@silverfox14/chain validate"
   }
 }
 ```
@@ -168,8 +157,8 @@ npx @silverfox14/chain watch
 **Now you can simply run:**
 ```bash
 npm run chain:menu      # Open interactive menu
-npm run chain:sync      # Sync to all editors
-npm run chain:watch     # Auto-sync on changes
+npm run chain:sync      # Generate MCP configs
+npm run chain:watch     # Regenerate configs on changes
 ```
 
 ### **🌍 Method 3: Global Installation (Use Anywhere)**
@@ -255,39 +244,31 @@ npx @silverfox14/chain init --advanced
 
 ## Your Chain Architecture
 
-After initiation, your project transforms into a connected powerhouse:
+After initiation, your project has:
 
 ```
 your-project/
-├── chain.yaml                   # The master key — editors, metadata, tech stack
-├── .chain/                      # Your forge (central content hub)
-│   ├── PROJECT.md               # Project soul → flows to all entry points
-│   ├── rules/                   # Development laws → all editors
+├── chain.yaml                   # Config — editors, mcp_servers, metadata
+├── .chain/                      # Your source of truth (MCP server reads this live)
+│   ├── PROJECT.md               # Project context → included in chain_full_context
+│   ├── rules/                   # Development rules
 │   │   └── project-conventions.md
-│   ├── skills/                  # AI abilities → all editors
+│   ├── skills/                  # AI skills
 │   │   ├── code-review.md
 │   │   ├── debug-assistant.md
-│   │   ├── refactor.md
 │   │   └── ...
-│   ├── workflows/               # Dev processes → Windsurf, Kiro
-│   │   ├── create-prd.md
-│   │   ├── generate-tasks.md
-│   │   └── ...
-│   └── overrides/               # Editor-specific fine-tuning
-│       ├── cursor/
-│       ├── claude/
+│   └── workflows/               # Dev workflows
+│       ├── create-prd.md
 │       └── ...
 
-│ # ↓ AUTO-FORGED by `chain sync` ↓
-├── .cursor/rules/               # Cursor connections
-├── .windsurf/rules/             # Windsurf connections
-├── .claude/rules/               # Claude connections
-├── CLAUDE.md                    # Claude entry point
-├── .cursorrules                 # Cursor entry point
-├── .windsurfrules               # Windsurf entry point
-├── AGENTS.md                    # Codex/Aider entry point
+# ↓ Generated by `chain sync` ↓
+├── .cursor/mcp.json             # Cursor MCP config (Chain server)
+├── .claude/settings.json        # Claude MCP config
+├── .kiro/settings/mcp.json      # Kiro MCP config
 └── ...
 ```
+
+Content is **not** copied to editor directories. The Chain MCP server reads `.chain/` live and exposes prompts.
 
 ## Configuration: Forge Your Master Key
 
@@ -342,33 +323,19 @@ custom_editors:
     entry_point: SUPERMAVEN.md
 ```
 
-## The Connected Editor Ecosystem
+## MCP-Capable Editors
 
-Chain connects you to the complete AI development landscape:
+Chain generates MCP configs for these editors (content served via prompts):
 
-| Editor | Rules | Skills | Workflows | MCP | Entry Point |
-|---|---|---|---|---|---|
-| **Cursor** | `.cursor/rules/` | `.cursor/commands/` | — | `.cursor/mcp.json` | `.cursorrules` |
-| **Windsurf** | `.windsurf/rules/` | `.windsurf/skills/` | ✓ | — | `.windsurfrules` |
-| **Claude Code** | `.claude/rules/` | `.claude/skills/` | — | `.claude/settings.json` | `CLAUDE.md` |
-| **Kiro** | `.kiro/steering/` | `.kiro/specs/workflows/` | ✓ | `.kiro/settings/mcp.json` | — |
-| **Trae** | `.trae/rules/` | `.trae/skills/` | — | — | — |
-| **Gemini** | `.gemini/` | — | — | — | `GEMINI.md` |
-| **Copilot** | `.github/instructions/` | `.github/instructions/` | — | `.vscode/mcp.json` | `.github/copilot-instructions.md` |
-| **Codex** | `.codex/` | `.codex/skills/` | — | — | `AGENTS.md` |
-| **Aider** | `.aider/` | — | — | — | `AGENTS.md` |
-| **Roo** | `.roo/rules/` | `.roo/skills/` | — | `.roo/mcp.json` | — |
-| **KiloCode** | `.kilocode/rules/` | `.kilocode/skills/` | — | `.kilocode/mcp.json` | — |
-| **Antigravity** | `.agent/rules/` | `.agent/skills/` | — | — | — |
-| **Bolt** | `.bolt/` | — | — | — | `.bolt/prompt` |
-| **Warp** | `.warp/rules/` | — | — | — | `WARP.md` |
-| **Replit** | `.replit/` | — | — | — | `replit.md` |
-| **Cline** | `.clinerules/` | — | — | — | — |
-| **Amazon Q** | `.amazonq/rules/` | — | — | `.amazonq/default.json` | — |
-| **Junie** | `.junie/` | — | — | — | `.junie/guidelines.md` |
-| **Augment** | `.augment/rules/` | — | — | — | — |
-| **Zed** | `.zed/rules/` | — | — | — | `.rules` |
-| **Continue** | `.continue/rules/` | — | — | — | — |
+| Editor | MCP Config |
+|--------|------------|
+| **Cursor** | `.cursor/mcp.json` |
+| **Claude Code** | `.claude/settings.json` |
+| **Kiro** | `.kiro/settings/mcp.json` |
+| **GitHub Copilot** | `.vscode/mcp.json` |
+| **Roo** | `.roo/mcp.json` |
+| **KiloCode** | `.kilocode/mcp.json` |
+| **Amazon Q** | `.amazonq/default.json` |
 
 ## Template Treasury: Ready-to-Forge Templates
 
@@ -474,7 +441,7 @@ content_sources:
     path: ./my-personal-rules     # Personal overrides
 ```
 
-**Local content always takes priority** over shared content. New local files are auto-promoted to the central hub during sync. Diffs between local and shared content are detected with interactive prompts to keep your chain strong.
+**Local content always takes priority** over shared content. The MCP server merges content from `content_sources` with your local `.chain/`.
 
 ## Chain Commands: Master Your Connections
 
@@ -484,14 +451,12 @@ content_sources:
 | `npx @silverfox14/chain init --advanced` | Master forge wizard with content sources and detailed tech stack |
 | `npx @silverfox14/chain init --force` | Re-forge (overwrites existing chain) |
 | `npx @silverfox14/chain init --shared` | Create shared content hub for cross-project sync |
-| `npx @silverfox14/chain sync` | Strengthen all connections to enabled editors |
-| `npx @silverfox14/chain sync --dry-run` | Preview chain strengthening before execution |
-| `npx @silverfox14/chain validate` | Verify chain integrity and content |
-| `npx @silverfox14/chain watch` | Eternal watch mode - auto-sync on every change |
-| `npx @silverfox14/chain sync-all` | Conquer entire monorepo forests |
-| `npx @silverfox14/chain sync-all --dry-run` | Preview monorepo conquest |
-| `npx @silverfox14/chain promote <file>` | Promote local content to shared hub |
-| `npx @silverfox14/chain promote <file> --force` | Force promotion to shared hub |
+| `npx @silverfox14/chain sync` | Generate MCP configs for enabled editors |
+| `npx @silverfox14/chain sync --dry-run` | Preview which MCP configs would be generated |
+| `npx @silverfox14/chain validate` | Verify config and MCP server |
+| `npx @silverfox14/chain watch` | Regenerate MCP configs on file changes |
+| `npx @silverfox14/chain sync-all` | Sync all projects in a monorepo |
+| `npx @silverfox14/chain sync-all --dry-run` | Preview monorepo sync |
 
 ## CI/CD Integration: Automated Chain Strength
 
@@ -556,6 +521,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md#testing) for detailed forging instructions
 
 - [docs/GUIDE.md](docs/GUIDE.md) — Complete chain mastery guide covering all features in exhaustive detail
 - [docs/PUBLISHING.md](docs/PUBLISHING.md) — How to publish Chain to the npm registry
+- [docs/NPM-REGISTRY-PUBLISHING.md](docs/NPM-REGISTRY-PUBLISHING.md) — How to publish Chain to your own npm registry (GitHub Packages, Verdaccio, etc.)
 
 ## Contributing: Strengthen the Chain
 

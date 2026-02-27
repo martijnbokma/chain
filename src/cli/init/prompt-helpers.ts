@@ -3,28 +3,15 @@ import type { ToolkitConfig } from "../../core/types.js";
 import { detectStack } from "../../utils/detect-stack.js";
 import type { DetectedStack } from "../../utils/detect-stack.js";
 
-export const ALL_EDITORS = [
+/** MCP-capable editors only — Chain MCP-only mode */
+export const MCP_CAPABLE_EDITORS = [
   { value: "cursor", label: "Cursor", hint: "AI-first code editor" },
-  { value: "windsurf", label: "Windsurf", hint: "Codeium editor" },
   { value: "claude", label: "Claude Code", hint: "Anthropic CLI" },
   { value: "kiro", label: "Kiro", hint: "AWS AI editor" },
-  { value: "trae", label: "Trae", hint: "ByteDance AI editor" },
-  { value: "gemini", label: "Gemini CLI", hint: "Google CLI" },
   { value: "copilot", label: "GitHub Copilot", hint: "VS Code extension" },
-  { value: "codex", label: "Codex CLI", hint: "OpenAI CLI" },
-  { value: "aider", label: "Aider", hint: "terminal pair programmer" },
   { value: "roo", label: "Roo Code", hint: "VS Code extension" },
   { value: "kilocode", label: "KiloCode", hint: "VS Code extension" },
-  { value: "antigravity", label: "Antigravity", hint: "AI editor" },
-  { value: "bolt", label: "Bolt", hint: "StackBlitz AI" },
-  { value: "warp", label: "Warp", hint: "AI terminal" },
-  { value: "replit", label: "Replit", hint: "Replit Agent" },
-  { value: "cline", label: "Cline", hint: "VS Code extension" },
   { value: "amazonq", label: "Amazon Q", hint: "AWS AI assistant" },
-  { value: "junie", label: "Junie", hint: "JetBrains AI agent" },
-  { value: "augment", label: "Augment Code", hint: "AI coding assistant" },
-  { value: "zed", label: "Zed", hint: "AI code editor" },
-  { value: "continue", label: "Continue", hint: "open-source AI extension" },
 ];
 
 export function isCancelled(value: unknown): value is symbol {
@@ -227,18 +214,20 @@ export async function askEditors(
     ? Object.entries(prev.editors)
         .filter(([, v]) => (typeof v === "boolean" ? v : v?.enabled !== false))
         .map(([k]) => k)
-    : ["cursor", "windsurf", "claude"];
+    : ["cursor", "claude"];
 
   const selectedEditors = await p.multiselect({
-    message: "Which editors do you use? (space to toggle, enter to confirm)",
-    options: ALL_EDITORS,
-    initialValues: prevEditors,
+    message: "Which MCP-capable editors do you use? (space to toggle, enter to confirm)",
+    options: MCP_CAPABLE_EDITORS,
+    initialValues: prevEditors.filter((e) =>
+      MCP_CAPABLE_EDITORS.some((m) => m.value === e),
+    ),
     required: true,
   });
   if (isCancelled(selectedEditors)) return null;
 
   const editors: Record<string, boolean> = {};
-  for (const editor of ALL_EDITORS) {
+  for (const editor of MCP_CAPABLE_EDITORS) {
     editors[editor.value] = (selectedEditors as string[]).includes(
       editor.value,
     );

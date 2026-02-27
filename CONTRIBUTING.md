@@ -66,11 +66,12 @@ bun run sync           # runs sync from source
 ### Testing in another project
 
 ```bash
-# Link globally
+# In chain repo: link globally
 bun link
 
-# In your test project
-bun link chain
+# In your test project: use the linked package
+bun link @silverfox14/chain
+bun chain init
 bun chain sync
 ```
 
@@ -91,10 +92,25 @@ bun run build          # Produces dist/ via tsup
 We use [Vitest](https://vitest.dev/) with globals enabled.
 
 ```bash
-bun run test           # Watch mode
-bun run test:run       # Single run
+bun run test           # Watch mode — reruns on file changes
+bun run test:run       # Single run (e.g. before commit)
 bun run test:coverage  # With coverage report
 ```
+
+### Running specific tests
+
+```bash
+# Single test file
+bun run test tests/cli/sync.test.ts
+
+# Filter by file name
+bun run test sync
+
+# Filter by test name pattern
+bun run test -t "should sync successfully"
+```
+
+For quick debugging, use `it.only()` or `describe.only()` to run a single test or suite.
 
 ### Coverage Reports
 

@@ -61,6 +61,7 @@ async function promoteContent(
   filePath: string,
   force: boolean,
 ): Promise<void> {
+  log.warn('chain promote is deprecated in MCP-only mode — content is served live from .chain/ via the MCP server');
   const spinner = createSpinner(`Promoting content${force ? ' (force)' : ''}...`);
   spinner.start();
 

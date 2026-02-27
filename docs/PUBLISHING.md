@@ -1,6 +1,29 @@
 # Publishing Chain to npm
 
-This guide explains how to publish `@silverfox14/chain` to the npm registry.
+This guide explains how to publish `@silverfox14/chain` to the **public** npm registry (npmjs.com).
+
+> **Eigen registry?** Zie [NPM-REGISTRY-PUBLISHING.md](./NPM-REGISTRY-PUBLISHING.md) voor publiceren naar GitHub Packages, Verdaccio, of een andere private registry.
+
+---
+
+## Quick release (simplest)
+
+When you're ready (logged in, clean working directory):
+
+```bash
+npm version patch
+npm publish
+```
+
+Or in one line: `npm version patch && npm publish`
+
+- **patch** → bug fixes (0.1.7 → 0.1.8)
+- **minor** → new features (0.1.7 → 0.2.0)
+- **major** → breaking changes (0.1.7 → 1.0.0)
+
+The `prepublishOnly` script runs typecheck, tests, and build automatically before publish. No manual build needed.
+
+---
 
 ## Prerequisites
 

@@ -1,6 +1,6 @@
 # Plan: Chain MCP Prompts Aanpak
 
-> Doel: Chain rules, skills en workflows via MCP Prompts aanbieden aan AI-editors, als alternatief of aanvulling op file sync.
+> **Status: Geïmplementeerd (MCP-only).** Chain rules, skills en workflows worden uitsluitend via MCP Prompts aangeboden. File sync is verwijderd.
 
 ## Executive Summary
 
@@ -241,24 +241,24 @@ Editors zonder MCP: file sync blijft nodig.
 
 ### Fase 2: Integratie (1–2 dagen)
 
-- [ ] chain init voegt Chain MCP server toe (opt-in)
-- [ ] generateMCPConfigs: Chain server in mcp_servers als enabled
-- [ ] content_sources hergebruik in content-loader
-- [ ] PROJECT.md in chain_full_context
+- [x] chain init voegt Chain MCP server toe (standaard)
+- [x] generateMCPConfigs: Chain server in mcp_servers als enabled
+- [x] content_sources hergebruik in content-loader
+- [x] PROJECT.md in chain_full_context
 
-### Fase 3: Verfijning (optioneel)
+### Fase 3: MCP-only (voltooid)
 
-- [ ] Individuele prompts per rule/skill
-- [ ] listChanged notificatie bij file watcher
-- [ ] sync_mode: mcp | hybrid
-- [ ] Overrides support
+- [x] sync_mode: mcp — file sync volledig verwijderd
+- [x] Alleen MCP-capable editors ondersteund
+- [ ] Individuele prompts per rule/skill (optioneel)
+- [ ] listChanged notificatie bij file watcher (optioneel)
 
 ---
 
 ## Success Criteria
 
-- [ ] `chain mcp-server` start en reageert op prompts/list en prompts/get
-- [ ] Cursor toont Chain prompts in UI (bij @ of prompts panel)
-- [ ] chain_full_context retourneert correcte merged content
-- [ ] Geen file sync nodig voor MCP-only gebruikers
-- [ ] Bestaande file sync blijft ongewijzigd (backward compatible)
+- [x] `chain mcp-server` start en reageert op prompts/list en prompts/get
+- [x] Cursor toont Chain prompts in UI (bij @ of prompts panel)
+- [x] chain_full_context retourneert correcte merged content
+- [x] Geen file sync nodig — MCP-only
+- [x] File sync verwijderd; Chain is MCP-only

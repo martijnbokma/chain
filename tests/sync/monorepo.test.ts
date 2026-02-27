@@ -16,16 +16,12 @@ describe('Monorepo', () => {
   });
 
   it('should sync root project', async () => {
-    // Setup root project
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
-    await writeFile(
-      join(testDir, '.chain', 'rules', 'root-rule.md'),
-      '# Root Rule',
-    );
+    await writeFile(join(testDir, '.chain', 'rules', 'root-rule.md'), '# Root Rule');
 
     const result = await runMonorepoSync(testDir);
 
@@ -34,17 +30,13 @@ describe('Monorepo', () => {
   });
 
   it('should find and sync sub-projects', async () => {
-    // Setup root without config
     const subProject = join(testDir, 'packages', 'app');
     await mkdir(join(subProject, '.chain', 'rules'), { recursive: true });
     await writeFile(
       join(subProject, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
-    await writeFile(
-      join(subProject, '.chain', 'rules', 'sub-rule.md'),
-      '# Sub Rule',
-    );
+    await writeFile(join(subProject, '.chain', 'rules', 'sub-rule.md'), '# Sub Rule');
 
     const result = await runMonorepoSync(testDir);
 
@@ -53,17 +45,15 @@ describe('Monorepo', () => {
   });
 
   it('should ignore node_modules directories', async () => {
-    // Create a config inside node_modules — should be ignored
     const nmProject = join(testDir, 'node_modules', 'some-pkg');
     await mkdir(nmProject, { recursive: true });
     await writeFile(
-      join(nmProject, 'ai-toolkit.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      join(nmProject, 'chain.yaml'),
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
 
     const result = await runMonorepoSync(testDir);
 
-    // Should not have synced anything from node_modules
     expect(result.synced).toEqual([]);
   });
 
@@ -71,8 +61,8 @@ describe('Monorepo', () => {
     const gitProject = join(testDir, '.git', 'subdir');
     await mkdir(gitProject, { recursive: true });
     await writeFile(
-      join(gitProject, 'ai-toolkit.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      join(gitProject, 'chain.yaml'),
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
 
     const result = await runMonorepoSync(testDir);
@@ -81,33 +71,24 @@ describe('Monorepo', () => {
   });
 
   it('should merge results from multiple sub-projects', async () => {
-    // Root project
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
-    await writeFile(
-      join(testDir, '.chain', 'rules', 'root.md'),
-      '# Root',
-    );
+    await writeFile(join(testDir, '.chain', 'rules', 'root.md'), '# Root');
 
-    // Sub-project
     const sub = join(testDir, 'packages', 'sub');
     await mkdir(join(sub, '.chain', 'rules'), { recursive: true });
     await writeFile(
-      join(sub, 'ai-toolkit.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      join(sub, 'chain.yaml'),
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
-    await writeFile(
-      join(sub, '.chain', 'rules', 'sub.md'),
-      '# Sub',
-    );
+    await writeFile(join(sub, '.chain', 'rules', 'sub.md'), '# Sub');
 
     const result = await runMonorepoSync(testDir);
 
     expect(result.errors).toEqual([]);
-    // Should have synced files from both root and sub
     expect(result.synced.length).toBeGreaterThanOrEqual(2);
   });
 

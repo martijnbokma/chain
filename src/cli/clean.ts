@@ -7,17 +7,17 @@ export interface CleanOptions {
   force?: boolean;
 }
 
+/** MCP-only: generated MCP configs and editor settings (not .chain/ — that is the source) */
 const GENERATED_PATHS = [
   ".cursor",
-  ".claude", 
-  ".windsurf",
+  ".claude",
+  ".kiro",
+  ".roo",
+  ".kilocode",
+  ".amazonq",
   ".ai-sync",
-  ".chain",
-  ".cursorrules",
-  "CLAUDE.md",
-  "WINDSURF.md",
   ".editorconfig",
-  ".vscode"
+  ".vscode",
 ];
 
 export async function runCleanCommand(projectDir: string, options: CleanOptions = {}) {

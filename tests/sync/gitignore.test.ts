@@ -41,8 +41,6 @@ describe('Gitignore', () => {
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
     expect(content).toContain('Chain managed');
-    expect(content).toContain('.cursor/rules/');
-    expect(content).toContain('.cursorrules');
     expect(content).toContain('.cursor/mcp.json');
   });
 
@@ -55,33 +53,30 @@ describe('Gitignore', () => {
     expect(content).toContain('node_modules/');
     expect(content).toContain('dist/');
     expect(content).toContain('Chain managed');
-    expect(content).toContain('.cursor/rules/');
+    expect(content).toContain('.cursor/mcp.json');
   });
 
   it('should replace existing managed block', async () => {
-    // First run — creates managed block with cursor
+    const claudeWithMcp = { ...claudeAdapter, mcpConfigPath: '.claude/settings.json' };
     await updateGitignore(testDir, [cursorAdapter]);
 
-    // Second run — replaces with cursor + claude
-    await updateGitignore(testDir, [cursorAdapter, claudeAdapter]);
+    await updateGitignore(testDir, [cursorAdapter, claudeWithMcp]);
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
-    expect(content).toContain('.cursor/rules/');
-    expect(content).toContain('.claude/rules/');
-    expect(content).toContain('.claude/skills/');
-    expect(content).toContain('CLAUDE.md');
+    expect(content).toContain('.cursor/mcp.json');
+    expect(content).toContain('.claude/settings.json');
 
-    // Should only have one managed block (not duplicated)
     const startCount = (content.match(/Chain managed \(DO NOT EDIT\)/g) || []).length;
     expect(startCount).toBe(1);
   });
 
-  it('should include entry points in gitignore', async () => {
-    await updateGitignore(testDir, [cursorAdapter, claudeAdapter]);
+  it('should include MCP config paths in gitignore', async () => {
+    const claudeWithMcp = { ...claudeAdapter, mcpConfigPath: '.claude/settings.json' };
+    await updateGitignore(testDir, [cursorAdapter, claudeWithMcp]);
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
-    expect(content).toContain('.cursorrules');
-    expect(content).toContain('CLAUDE.md');
+    expect(content).toContain('.cursor/mcp.json');
+    expect(content).toContain('.claude/settings.json');
   });
 
   it('should include MCP config paths in gitignore', async () => {
@@ -92,17 +87,17 @@ describe('Gitignore', () => {
   });
 
   it('should sort paths alphabetically within managed block', async () => {
-    await updateGitignore(testDir, [cursorAdapter, claudeAdapter]);
+    const claudeWithMcp = { ...claudeAdapter, mcpConfigPath: '.claude/settings.json' };
+    await updateGitignore(testDir, [cursorAdapter, claudeWithMcp]);
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
-    const startMarker = '# >>> ai-toolkit managed (DO NOT EDIT) >>>';
-    const endMarker = '# <<< ai-toolkit managed <<<';
+    const startMarker = '# >>> Chain managed (DO NOT EDIT) >>>';
+    const endMarker = '# <<< Chain managed <<<';
     const startIdx = content.indexOf(startMarker);
     const endIdx = content.indexOf(endMarker);
     const block = content.substring(startIdx + startMarker.length, endIdx).trim();
     const lines = block.split('\n').map((l) => l.trim()).filter(Boolean);
 
-    // Verify sorted
     const sorted = [...lines].sort();
     expect(lines).toEqual(sorted);
   });
@@ -118,41 +113,38 @@ describe('Gitignore', () => {
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
     expect(content).toContain('node_modules/');
     expect(content).toContain('*.log');
-    expect(content).toContain('.cursor/rules/');
+    expect(content).toContain('.cursor/mcp.json');
   });
 
-  it('should deduplicate paths when skills and rules share a directory', async () => {
-    const adapterWithSharedDir: EditorAdapter = {
+  it('should deduplicate MCP config paths', async () => {
+    const adapter1: EditorAdapter = {
       name: 'test',
       fileNaming: 'flat',
-      directories: {
-        rules: '.test/rules',
-        skills: '.test/rules', // Same as rules
-      },
+      mcpConfigPath: '.test/mcp.json',
+      directories: { rules: '.test/rules' },
+    };
+    const adapter2: EditorAdapter = {
+      ...adapter1,
+      name: 'test2',
+      mcpConfigPath: '.test/mcp.json',
     };
 
-    await updateGitignore(testDir, [adapterWithSharedDir]);
+    await updateGitignore(testDir, [adapter1, adapter2]);
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
-    const rulesDirCount = (content.match(/\.test\/rules\//g) || []).length;
-    expect(rulesDirCount).toBe(1);
+    const mcpCount = (content.match(/\.test\/mcp\.json/g) || []).length;
+    expect(mcpCount).toBe(1);
   });
 
-  it('should include workflows directory when different from skills', async () => {
-    const adapterWithWorkflows: EditorAdapter = {
-      name: 'windsurf',
+  it('should only add mcpConfigPath for adapters that have it', async () => {
+    const adapterWithoutMcp: EditorAdapter = {
+      name: 'no-mcp',
       fileNaming: 'flat',
-      entryPoint: '.windsurfrules',
-      directories: {
-        rules: '.windsurf/rules',
-        skills: '.windsurf/skills',
-        workflows: '.windsurf/workflows',
-      },
+      directories: { rules: '.no-mcp/rules' },
     };
-
-    await updateGitignore(testDir, [adapterWithWorkflows]);
+    await updateGitignore(testDir, [adapterWithoutMcp]);
 
     const content = await readFile(join(testDir, '.gitignore'), 'utf-8');
-    expect(content).toContain('.windsurf/workflows/');
+    expect(content).not.toContain('.no-mcp/rules');
   });
 });

@@ -110,6 +110,19 @@ export async function runQuickSetup(
   if (!editors) return null;
   config.editors = editors;
 
+  // --- 3b. Chain MCP server (always included for MCP-only mode) ---
+  const chainMcp = {
+    name: "chain",
+    command: "npx",
+    args: ["-y", "@silverfox14/chain", "mcp-server"],
+  };
+  const existingMcp = Array.isArray(prev.mcp_servers) ? prev.mcp_servers : [];
+  const others = existingMcp.filter(
+    (s): s is Record<string, unknown> =>
+      typeof s === "object" && s !== null && (s as { name?: string }).name !== "chain",
+  );
+  config.mcp_servers = [chainMcp, ...others];
+
   // --- 4. Cross-Project Sync Setup ---
   const useSharedContent = await p.confirm({
     message: "🔄 Share your AI skills/rules across multiple projects?",

@@ -8,6 +8,7 @@ import { log } from '../utils/logger.js';
 
 export async function runWatchCommand(projectRoot: string): Promise<void> {
   log.header('Watching for changes...');
+  log.dim('Note: MCP server reads .chain/ live — watch mainly triggers MCP config and settings sync');
 
   // Run initial sync
   await runSyncCommand(projectRoot);

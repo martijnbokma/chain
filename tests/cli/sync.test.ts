@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { join } from 'path';
-import { mkdtemp, rm, writeFile, mkdir, readFile, unlink } from 'fs/promises';
+import { mkdtemp, rm, writeFile, mkdir, readFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { mockProcessExit, suppressConsole } from './helpers.js';
 
@@ -39,81 +39,70 @@ describe('runSyncCommand', () => {
     expect(exitSpy).toHaveBeenCalledWith(1);
   });
 
-  it('should sync successfully with valid config', async () => {
+  it('should sync successfully with valid config (MCP-only)', async () => {
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    await writeFile(join(testDir, '.chain', 'rules', 'test.md'), '# Test Rule');
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir);
 
     expect(exitSpy).not.toHaveBeenCalled();
 
-    // Verify files were synced
-    const cursorRule = await readFile(join(testDir, '.cursor', 'rules', 'test.md'), 'utf-8');
-    expect(cursorRule).toContain('# Test Rule');
+    const mcpJson = await readFile(join(testDir, '.cursor', 'mcp.json'), 'utf-8');
+    const parsed = JSON.parse(mcpJson);
+    expect(parsed.mcpServers['chain']).toBeDefined();
   });
 
   it('should run in dry-run mode without writing files', async () => {
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    await writeFile(join(testDir, '.chain', 'rules', 'test.md'), '# Test');
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir, { dryRun: true });
 
     expect(exitSpy).not.toHaveBeenCalled();
 
-    // Files should NOT be created in dry-run
     const { access } = await import('fs/promises');
-    await expect(access(join(testDir, '.cursor', 'rules', 'test.md'))).rejects.toThrow();
+    await expect(access(join(testDir, '.cursor', 'mcp.json'))).rejects.toThrow();
   });
 
-  it('should handle orphans with user confirmation', async () => {
+  it('should complete sync without errors', async () => {
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    await writeFile(join(testDir, '.chain', 'rules', 'temp.md'), '# Temp');
 
-    // First sync to create files
     const runSyncCommand = await importCommand();
-    await runSyncCommand(testDir);
-
-    // Delete source and re-sync — orphan detection + readline mock answers 'y'
-    await unlink(join(testDir, '.chain', 'rules', 'temp.md'));
     await runSyncCommand(testDir);
 
     expect(exitSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle SSOT diffs when content_sources configured', async () => {
+  it('should sync with content_sources configured', async () => {
     const ssotDir = join(testDir, 'ssot-source');
     await mkdir(join(ssotDir, 'rules'), { recursive: true });
     await writeFile(join(ssotDir, 'rules', 'shared.md'), '# SSOT version');
 
     await writeFile(
       join(testDir, 'chain.yaml'),
-      `version: "1.0"\neditors:\n  cursor: true\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
+      `version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    // Create a local version that differs from SSOT
-    await writeFile(join(testDir, '.chain', 'rules', 'shared.md'), '# Local version');
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir);
@@ -121,16 +110,14 @@ describe('runSyncCommand', () => {
     expect(exitSpy).not.toHaveBeenCalled();
   });
 
-  it('should show summary with synced and removed counts', async () => {
+  it('should show summary with synced counts', async () => {
     await writeFile(
       join(testDir, 'chain.yaml'),
-      'version: "1.0"\neditors:\n  cursor: true\n',
+      'version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\n',
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    await writeFile(join(testDir, '.chain', 'rules', 'a.md'), '# A');
-    await writeFile(join(testDir, '.chain', 'rules', 'b.md'), '# B');
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir);
@@ -138,49 +125,41 @@ describe('runSyncCommand', () => {
     expect(exitSpy).not.toHaveBeenCalled();
   });
 
-  it('should handle SSOT orphans (file in SSOT but removed locally)', async () => {
+  it('should sync with content_sources', async () => {
     const ssotDir = join(testDir, 'ssot');
     await mkdir(join(ssotDir, 'rules'), { recursive: true });
     await mkdir(join(ssotDir, 'skills'), { recursive: true });
     await mkdir(join(ssotDir, 'workflows'), { recursive: true });
-    // SSOT has a file that doesn't exist locally
-    await writeFile(join(ssotDir, 'rules', 'orphan-rule.md'), '# Orphan');
+    await writeFile(join(ssotDir, 'rules', 'shared.md'), '# Shared');
 
     await writeFile(
       join(testDir, 'chain.yaml'),
-      `version: "1.0"\neditors:\n  cursor: true\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
+      `version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-    // No local orphan-rule.md → SSOT orphan detected
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir);
 
-    // readline mock answers 'y', so orphan should be removed from SSOT
     expect(exitSpy).not.toHaveBeenCalled();
   });
 
-  it('should trigger resync when SSOT-newer diff is accepted', async () => {
+  it('should sync with content_sources and local overrides', async () => {
     const ssotDir = join(testDir, 'ssot2');
     await mkdir(join(ssotDir, 'rules'), { recursive: true });
     await mkdir(join(ssotDir, 'skills'), { recursive: true });
     await mkdir(join(ssotDir, 'workflows'), { recursive: true });
+    await writeFile(join(ssotDir, 'rules', 'shared.md'), '# SSOT');
 
     await writeFile(
       join(testDir, 'chain.yaml'),
-      `version: "1.0"\neditors:\n  cursor: true\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
+      `version: "1.0"\neditors:\n  cursor: true\nmcp_servers:\n  - name: chain\n    command: npx\n    args: ["-y", "@silverfox14/chain", "mcp-server"]\ncontent_sources:\n  - type: local\n    path: "${ssotDir}"\n`,
     );
     await mkdir(join(testDir, '.chain', 'rules'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'skills'), { recursive: true });
     await mkdir(join(testDir, '.chain', 'workflows'), { recursive: true });
-
-    // Create both local and SSOT with same name but different content
-    await writeFile(join(testDir, '.chain', 'rules', 'diff.md'), '# Old local');
-    // Wait a bit then write SSOT version (newer)
-    await new Promise((r) => setTimeout(r, 50));
-    await writeFile(join(ssotDir, 'rules', 'diff.md'), '# Updated SSOT');
 
     const runSyncCommand = await importCommand();
     await runSyncCommand(testDir);

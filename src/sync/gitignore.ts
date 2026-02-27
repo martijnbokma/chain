@@ -1,6 +1,5 @@
 import { join } from 'path';
 import type { EditorAdapter } from '../core/types.js';
-import { CONTENT_DIR } from '../core/types.js';
 import { fileExists, readTextFile, writeTextFile } from '../utils/file-ops.js';
 import { log } from '../utils/logger.js';
 
@@ -16,20 +15,8 @@ export async function updateGitignore(
   // Collect all generated paths that should be gitignored
   const generatedPaths = new Set<string>();
 
-  // Add the content directory (.chain/)
-  generatedPaths.add(CONTENT_DIR + '/');
-
   for (const adapter of adapters) {
-    generatedPaths.add(adapter.directories.rules + '/');
-    if (adapter.directories.skills) {
-      generatedPaths.add(adapter.directories.skills + '/');
-    }
-    if (adapter.directories.workflows && adapter.directories.workflows !== adapter.directories.skills) {
-      generatedPaths.add(adapter.directories.workflows + '/');
-    }
-    if (adapter.entryPoint) {
-      generatedPaths.add(adapter.entryPoint);
-    }
+    // MCP-only: only add mcpConfigPath (we no longer generate rules/skills/entry points)
     if (adapter.mcpConfigPath) {
       generatedPaths.add(adapter.mcpConfigPath);
     }

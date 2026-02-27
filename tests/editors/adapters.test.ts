@@ -22,8 +22,8 @@ const configMinimal: ToolkitConfig = {
 describe('Editor Adapters — generateEntryPointContent', () => {
   const adaptersWithEntryPoint = getAllAdapters().filter((a) => a.entryPoint && a.generateEntryPointContent);
 
-  it('should have at least 5 adapters with entry points', () => {
-    expect(adaptersWithEntryPoint.length).toBeGreaterThanOrEqual(5);
+  it('should have adapters with entry points', () => {
+    expect(adaptersWithEntryPoint.length).toBeGreaterThanOrEqual(1);
   });
 
   for (const adapter of adaptersWithEntryPoint) {
@@ -65,8 +65,8 @@ describe('Editor Adapters — generateEntryPointContent', () => {
 describe('Editor Adapters — generateFrontmatter', () => {
   const adaptersWithFrontmatter = getAllAdapters().filter((a) => a.generateFrontmatter);
 
-  it('should have at least 2 adapters with frontmatter support', () => {
-    expect(adaptersWithFrontmatter.length).toBeGreaterThanOrEqual(2);
+  it('should have at least 1 adapter with frontmatter support', () => {
+    expect(adaptersWithFrontmatter.length).toBeGreaterThanOrEqual(1);
   });
 
   for (const adapter of adaptersWithFrontmatter) {
@@ -194,14 +194,12 @@ describe('Editor Registry — custom_editors', () => {
 });
 
 describe('Editor Registry — getAllEditorDirs', () => {
-  it('should return unique directories from all adapters', () => {
+  it('should return unique MCP config paths from all adapters', () => {
     const dirs = getAllEditorDirs();
     expect(dirs.length).toBeGreaterThan(0);
-    // Should be unique
     expect(dirs.length).toBe(new Set(dirs).size);
-    // Should include known dirs
-    expect(dirs).toContain('.cursor/rules');
-    expect(dirs).toContain('.claude/rules');
+    expect(dirs).toContain('.cursor/mcp.json');
+    expect(dirs).toContain('.claude/settings.json');
   });
 });
 
@@ -233,59 +231,19 @@ describe('Editor Adapters — specific adapters', () => {
     expect(fm).toContain('description: Review code');
   });
 
-  it('windsurf should have correct directories and frontmatter', () => {
-    const windsurf = getAdapter('windsurf')!;
-    expect(windsurf.directories.rules).toBe('.windsurf/rules');
-    expect(windsurf.directories.skills).toBe('.windsurf/skills');
-    expect(windsurf.directories.workflows).toBe('.windsurf/workflows');
-    expect(windsurf.entryPoint).toBe('.windsurfrules');
-
-    const fm = windsurf.generateFrontmatter!('test');
-    expect(fm).toContain('Auto-synced by @silverfox14/chain');
-  });
-
-  it('kiro should have correct directories', () => {
+  it('kiro should have correct directories and mcp path', () => {
     const kiro = getAdapter('kiro')!;
     expect(kiro.directories.rules).toBe('.kiro/steering');
     expect(kiro.mcpConfigPath).toBe('.kiro/settings/mcp.json');
   });
 
-  it('trae should use subdirectory file naming', () => {
-    const trae = getAdapter('trae')!;
-    expect(trae.fileNaming).toBe('subdirectory');
+  it('roo should have mcp config path', () => {
+    const roo = getAdapter('roo')!;
+    expect(roo.mcpConfigPath).toBe('.roo/mcp.json');
   });
 
-  it('trae should generate frontmatter with skill name', () => {
-    const trae = getAdapter('trae')!;
-    const fm = trae.generateFrontmatter!('debug-helper');
-    expect(fm).toContain('name: debug-helper');
-  });
-
-  it('trae frontmatter should include description when provided', () => {
-    const trae = getAdapter('trae')!;
-    const fm = trae.generateFrontmatter!('debug', 'Debug helper');
-    expect(fm).toContain('description: Debug helper');
-  });
-
-  it('bolt should generate entry point content', () => {
-    const bolt = getAdapter('bolt')!;
-    const content = bolt.generateEntryPointContent!(configWithStack);
-    expect(content).toContain(AUTO_GENERATED_MARKER);
-    expect(content).toContain('MyApp');
-    expect(content).toContain('TypeScript');
-  });
-
-  it('replit should generate entry point content', () => {
-    const replit = getAdapter('replit')!;
-    const content = replit.generateEntryPointContent!(configWithStack);
-    expect(content).toContain(AUTO_GENERATED_MARKER);
-    expect(content).toContain('MyApp');
-  });
-
-  it('junie should generate entry point content', () => {
-    const junie = getAdapter('junie')!;
-    const content = junie.generateEntryPointContent!(configWithStack);
-    expect(content).toContain('Junie Guidelines');
-    expect(content).toContain('MyApp');
+  it('amazonq should have mcp config path', () => {
+    const amazonq = getAdapter('amazonq')!;
+    expect(amazonq.mcpConfigPath).toBe('.amazonq/default.json');
   });
 });
