@@ -106,6 +106,8 @@ const EXAMPLE_RULE = `# Project Conventions
 - Maintain existing test coverage
 `;
 
+// Used when templates/rules/ has no project-conventions.md
+
 async function copyTemplates(
   templateSubdir: string,
   contentDir: string,
@@ -242,7 +244,12 @@ export async function runInit(
       await ensureDir(dir);
     }
 
-    // Create example files if they don't exist
+    // Copy built-in templates (starter defaults for new users)
+    await copyTemplates("rules", contentDir, RULES_DIR);
+    await copyTemplates("skills", contentDir, SKILLS_DIR);
+    await copyTemplates("workflows", contentDir, WORKFLOWS_DIR);
+
+    // Fallback: create project-conventions if templates didn't provide it
     const exampleRulePath = join(
       contentDir,
       RULES_DIR,
@@ -285,10 +292,6 @@ export async function runInit(
         await writeTextFile(projectContextPath, projectContext);
       }
     }
-
-    // Copy built-in skill and workflow templates
-    await copyTemplates("skills", contentDir, SKILLS_DIR);
-    await copyTemplates("workflows", contentDir, WORKFLOWS_DIR);
 
     // Add sync scripts to package.json
     const scriptsAdded = await addSyncScripts(projectRoot);

@@ -28,10 +28,8 @@ PROJECT.md is the Single Source of Truth for this project and contains:
 Reading PROJECT.md first ensures alignment with project conventions and prevents architectural violations.
 
 ## Package Manager
-- **Always use `bun`** as the package manager. Never use `npm` or `pnpm`.
-- Use `bun install` to install dependencies
-- Use `bun run <script>` to run scripts
-- Use `bun add <package>` to add dependencies
+- Use the package manager specified in the project (check `package.json` scripts and lockfile)
+- Prefer the project's existing choice (npm, bun, pnpm, yarn)
 
 ## Code Style
 - Follow existing patterns in the codebase

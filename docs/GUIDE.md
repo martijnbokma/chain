@@ -110,10 +110,7 @@ This creates:
 - `.chain/skills/` — AI skills/commands
 - `.chain/workflows/` — development workflows
 
-Plus example files:
-- `.chain/rules/project-conventions.md`
-- `.chain/skills/code-review.md`, `debug-assistant.md`, `finding-refactor-candidates.md`, `refactor.md`, `verifying-responsiveness.md`
-- `.chain/workflows/create-prd.md`, `generate-tasks.md`, `refactor-prd.md`
+Plus built-in templates (rules, skills, workflows) — see [Built-in templates](#built-in-templates-starter-defaults) for the full list.
 
 Automatic DX setup (when possible):
 - **package.json** — adds `sync`, `sync:dry`, and `sync:watch` scripts
@@ -429,11 +426,21 @@ extends:
 
 ---
 
-## Built-in skill & workflow templates
+## Built-in templates (starter defaults)
 
-During `init`, built-in templates are automatically copied to `.chain/skills/` and `.chain/workflows/`. Existing files are never overwritten.
+During `init`, built-in templates are copied to `.chain/` as **starter defaults** for new users. Existing files are never overwritten.
 
-### Skills (5 templates)
+### Rules
+
+| Template | Description |
+|---|---|
+| `project-conventions.md` | SSOT load order, code style, package manager |
+| `user-preferences.md` | User-level defaults (language, formatting, tooling) |
+| `skill-router.md` | Routes tasks to the right skill |
+| `error-handling.md` | Clear error messages, no crashes on config errors |
+| `git-conventions.md` | Branch naming, commit style, pre-commit |
+
+### Essential skills
 
 | Template | Description |
 |---|---|
@@ -442,16 +449,24 @@ During `init`, built-in templates are automatically copied to `.chain/skills/` a
 | `finding-refactor-candidates.md` | Identify code that can be refactored |
 | `refactor.md` | Perform refactoring without changing functionality |
 | `verifying-responsiveness.md` | Verify responsive design |
+| `write-tests.md` | TDD for new features, adding tests |
+| `security-checklist.md` | Security scan, no secrets, input validation |
+| `conventional-commit.md` | Conventional commit messages with emoji |
+| `documentation.md` | README, API docs, inline comments |
+| `bug-fix.md` | Bug fix flow with failing test first |
 
-### Workflows (3 templates)
+### Essential workflows
 
 | Template | Description |
 |---|---|
 | `create-prd.md` | Create a Product Requirements Document |
 | `generate-tasks.md` | Generate tasks from a PRD |
 | `refactor-prd.md` | PRD for a refactoring project |
+| `bug-fix.md` | Issue → branch → failing test → fix → commit |
+| `write-github-issue.md` | Feature description → structured GitHub issue |
+| `commit.md` | Staged changes → pre-commit checks → conventional commit |
 
-You can customize or delete these templates. They serve as a starting point.
+Customize or delete any template. Use `content_sources` (e.g. `~/.chain-hub`) to share content across projects.
 
 ---
 
