@@ -6,17 +6,17 @@
 
 ## The Chain Revolution
 
-In the fragmented world of AI development, every editor speaks its own language. Rules get duplicated. Skills go missing. **Chain** is the missing link — an MCP server that serves your `.chain/` content live to every connected editor.
+In the fragmented world of AI development, every editor speaks its own language. Rules get duplicated. Skills go missing. **Chain** is the missing link — an MCP server that serves your `chain-hub/` content live to every connected editor.
 
-**Chain transforms chaos into harmony** — one source of truth (`.chain/`) served via the Model Context Protocol. No file sync, no duplication. Select prompts when you need them.
+**Chain transforms chaos into harmony** — one source of truth (`chain-hub/`) served via the Model Context Protocol. No file sync, no duplication. Select prompts when you need them.
 
 ## Why Chain Changes Everything
 
 ### 🚀 **MCP-Only — One Simple Way**
-Content stays in `.chain/`. The Chain MCP server reads it live. No copying to editor-specific directories. Select `@chain_full_context` or `@chain_rules` when you need them.
+Content stays in `chain-hub/`. The Chain MCP server reads it live. No copying to editor-specific directories. Select `@chain_full_context` or `@chain_rules` when you need them.
 
 ### ⚡ **No Sync Needed**
-Edit `.chain/` and the MCP server serves the latest content immediately. Run `chain sync` only to regenerate MCP configs when you add editors or change settings.
+Edit `chain-hub/` and the MCP server serves the latest content immediately. Run `chain sync` only to regenerate MCP configs when you add editors or change settings.
 
 ### 🔗 **Forged in Steel**
 Built with TypeScript precision and tested across 380+ test cases, Chain is the unbreakable backbone your AI development workflow deserves.
@@ -25,7 +25,7 @@ Built with TypeScript precision and tested across 380+ test cases, Chain is the 
 
 - **🔌 MCP-First** — Chain MCP server exposes rules, skills, and workflows as prompts (chain_full_context, chain_rules, chain_skills, chain_workflows)
 - **🌐 MCP-Capable Editors** — Cursor, Claude Code, Kiro, GitHub Copilot, Roo, KiloCode, Amazon Q
-- **⚙️ Single Source of Truth** — Your `.chain/` directory is the master; the MCP server reads it live
+- **⚙️ Single Source of Truth** — Your `chain-hub/` directory is the master; the MCP server reads it live
 - **🎯 Intelligent Context** — PROJECT.md enriches prompts with deep project understanding
 - **🧠 Tech Stack Telepathy** — Automatically detects your language, framework, runtime, and database
 - **📚 Template Treasury** — 8 battle-tested stack templates ready to deploy
@@ -119,7 +119,7 @@ This generates `.cursor/mcp.json`, `.claude/settings.json`, etc. with the Chain 
 ### **Step 4: Use Prompts in Your Editor**
 Open your project in Cursor, Claude Code, or another MCP-capable editor. Select `@chain_full_context`, `@chain_rules`, `@chain_skills`, or `@chain_workflows` when you need them.
 
-**🎉 That's it! Content is served live from `.chain/` — no file sync needed.**
+**🎉 That's it! Content is served live from `chain-hub/` — no file sync needed.**
 
 > **Migrating from file sync?** See [docs/MIGRATION-MCP-ONLY.md](docs/MIGRATION-MCP-ONLY.md).
 
@@ -189,7 +189,7 @@ npx @silverfox14/chain menu
 **For multi-project workflows:**
 ```bash
 # During init, choose "Yes" for sharing across projects
-# Your shared hub will be created at ~/.chain-shared
+# Your shared hub will be created at ~/chain-hub
 # All projects will automatically use the same skills/rules
 ```
 
@@ -208,8 +208,8 @@ That's it. The wizard forges your initial chain with minimal questions, auto-det
 ### **Quickest Setup - Shared Local Hub**
 ```bash
 # 1. Create your shared content hub (one-time setup)
-mkdir ~/.chain-hub
-cd ~/.chain-hub
+mkdir ~/chain-hub
+cd ~/chain-hub
 npx @silverfox14/chain init
 # Add your custom skills, rules, workflows here
 
@@ -217,7 +217,7 @@ npx @silverfox14/chain init
 cd your-project
 echo "content_sources:
   - type: local
-    path: ~/.chain-hub" > chain.yaml
+    path: ~/chain-hub" > chain.yaml
 npx @silverfox14/chain sync
 ```
 
@@ -249,7 +249,7 @@ After initiation, your project has:
 ```
 your-project/
 ├── chain.yaml                   # Config — editors, mcp_servers, metadata
-├── .chain/                      # Your source of truth (MCP server reads this live)
+├── chain-hub/                   # Your source of truth (MCP server reads this live)
 │   ├── PROJECT.md               # Project context → included in chain_full_context
 │   ├── rules/                   # Development rules
 │   │   └── project-conventions.md
@@ -268,7 +268,7 @@ your-project/
 └── ...
 ```
 
-Content is **not** copied to editor directories. The Chain MCP server reads `.chain/` live and exposes prompts.
+Content is **not** copied to editor directories. The Chain MCP server reads `chain-hub/` live and exposes prompts.
 
 ## Configuration: Forge Your Master Key
 
@@ -361,7 +361,7 @@ extends:
 
 ### Skill Arsenal - AI Capabilities Ready to Deploy
 
-Automatically copied to `.chain/skills/` during initiation:
+Automatically copied to `chain-hub/skills/` during initiation:
 
 | Skill | Description |
 |---|---|
@@ -381,7 +381,7 @@ Automatically copied to `.chain/skills/` during initiation:
 
 ### Workflow Templates - Development Process Blueprints
 
-Copied to `.chain/workflows/` during initiation:
+Copied to `chain-hub/workflows/` during initiation:
 
 | Workflow | Description |
 |---|---|
@@ -441,7 +441,7 @@ content_sources:
     path: ./my-personal-rules     # Personal overrides
 ```
 
-**Local content always takes priority** over shared content. The MCP server merges content from `content_sources` with your local `.chain/`.
+**Local content always takes priority** over shared content. The MCP server merges content from `content_sources` with your local `chain-hub/`.
 
 ## Chain Commands: Master Your Connections
 
@@ -479,7 +479,7 @@ content_sources:
 name: Chain Integrity Check
 on:
   pull_request:
-    paths: ['.chain/**', 'chain.yaml']
+    paths: ['chain-hub/**', 'chain.yaml']
 jobs:
   check:
     runs-on: ubuntu-latest

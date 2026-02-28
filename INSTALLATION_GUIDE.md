@@ -253,8 +253,9 @@ pnpm add -g chain
 
 ```bash
 # Step 1: Create your shared hub (one-time setup)
-mkdir ~/.chain-shared
-cd ~/.chain-shared
+# Use visible directory instead of hidden
+mkdir ~/chain-hub
+cd ~/chain-hub
 npx @silverfox14/chain init
 # Add your custom skills and rules here
 
@@ -262,7 +263,7 @@ npx @silverfox14/chain init
 cd my-project
 echo "content_sources:
   - type: local
-    path: ~/.chain-shared" > chain.yaml
+    path: ~/chain-hub" > chain.yaml
 npx @silverfox14/chain sync
 ```
 
@@ -291,7 +292,7 @@ npx @silverfox14/chain init
 
 # Link in projects
 cd my-project
-ln -s ~/my-ai-rules/.chain .chain
+ln -s ~/my-ai-rules/chain-hub .chain
 ```
 
 **📖 For detailed setup instructions, see the [Cross-Project Setup Guide](README.md#cross-project-chain-network).**
@@ -354,7 +355,7 @@ bun run chain:smart-sync
 
 ✅ **Detects your tech stack** - Language, framework, database  
 ✅ **Asks about your AI editors** - Cursor, Windsurf, Claude, etc.  
-✅ **Creates configuration files** - `chain.yaml`, `.chain/` directory  
+✅ **Creates configuration files** - `chain.yaml`, `chain-hub/` directory (visible, not hidden)  
 ✅ **Sets up git hooks** - Auto-sync on commits  
 ✅ **Generates starter content** - Rules, skills, workflows  
 ✅ **Syncs to your editors** - Creates `.cursorrules`, `CLAUDE.md`, etc.  
@@ -362,7 +363,7 @@ bun run chain:smart-sync
 **You'll see output like:**
 ```
 🚀 chain setup complete!
-✅ Created .chain/ directory
+✅ Created chain-hub/ directory
 ✅ Generated 15 skills  
 ✅ Synced to 3 editors
 🎉 Your AI editors are ready!
@@ -377,8 +378,8 @@ bun run chain:smart-sync
 ### **Customize Your Content**
 ```bash
 # Edit your rules and skills
-code .chain/rules/project-conventions.md
-code .chain/skills/code-review.md
+code chain-hub/rules/project-conventions.md
+code chain-hub/skills/code-review.md
 
 # Re-sync after changes
 npx @silverfox14/chain sync
@@ -389,7 +390,7 @@ npx @silverfox14/chain sync
 # In each new project
 echo "content_sources:
   - type: local
-    path: ~/.chain-shared" > chain.yaml
+    path: ~/chain-hub" > chain.yaml
 npx @silverfox14/chain sync
 ```
 
@@ -465,7 +466,7 @@ tech_stack:
 ### Step 5: Describe Your Project
 
 **🎯 What you need to do:**
-Open the file `.chain/PROJECT.md` and fill in information about your project.
+Open the file `chain-hub/PROJECT.md` and fill in information about your project.
 
 **📝 What you should fill in:**
 ```markdown
@@ -525,7 +526,7 @@ npx chain validate
 ```
 ✔ Configuration is valid
 ✔ Editors enabled: cursor, windsurf, claude
-✔ Content directory exists: .chain/
+✔ Content directory exists: chain-hub/
 Content: 1 rule(s), 5 skill(s), 3 workflow(s)
 ✔ Validation passed — ready to sync!
 ```
@@ -561,13 +562,13 @@ npx chain sync
 
 Syncing to 3 editor(s): cursor, windsurf, claude
 ℹ Found 1 rule(s)
-  ✓ .chain/rules/project-conventions.md → .cursor/rules/project-conventions.md
-  ✓ .chain/rules/project-conventions.md → .windsurf/rules/project-conventions.md
-  ✓ .chain/rules/project-conventions.md → .claude/rules/project-conventions.md
+  ✓ chain-hub/rules/project-conventions.md → .cursor/rules/project-conventions.md
+  ✓ chain-hub/rules/project-conventions.md → .windsurf/rules/project-conventions.md
+  ✓ chain-hub/rules/project-conventions.md → .claude/rules/project-conventions.md
 ℹ Found 5 skill(s)
-  ✓ .chain/skills/code-review.md → .cursor/commands/code-review.md
-  ✓ .chain/skills/code-review.md → .windsurf/workflows/code-review.md
-  ✓ .chain/skills/code-review.md → .claude/skills/code-review.md
+  ✓ chain-hub/skills/code-review.md → .cursor/commands/code-review.md
+  ✓ chain-hub/skills/code-review.md → .windsurf/workflows/code-review.md
+  ✓ chain-hub/skills/code-review.md → .claude/skills/code-review.md
   ✓ generated → .cursorrules
   ✓ generated → .windsurfrules
   ✓ generated → CLAUDE.md
@@ -629,7 +630,7 @@ Create a simple test rule to see if synchronization works:
 
 ```bash
 echo "# Test Rule
-This is a test to check if sync works." > .chain/rules/test-rule.md
+This is a test to check if sync works." > chain-hub/rules/test-rule.md
 ```
 
 Sync and verify:
@@ -694,7 +695,7 @@ editors:
 
 ### ❌ Problem: "Content directory not found"
 
-**🔍 What it means:** The `.chain/` folder is missing.
+**🔍 What it means:** The `chain-hub/` folder is missing.
 
 **✅ Solution:** Run the initialization again:
 ```bash
@@ -720,17 +721,17 @@ tech_stack:
 
 ### ❌ Problem: Sync creates no files
 
-**🔍 What it means:** There's no content in the `.chain/` folders.
+**🔍 What it means:** There's no content in the `chain-hub/` folders.
 
 **✅ Solution:** Add some content:
 ```bash
 # Add a rule
 echo "# My Rule
-Follow these conventions..." > .chain/rules/my-rule.md
+Follow these conventions..." > chain-hub/rules/my-rule.md
 
 # Add a skill
 echo "# My Skill
-Help me with this task..." > .chain/skills/my-skill.md
+Help me with this task..." > chain-hub/skills/my-skill.md
 
 # Then sync
 npx chain sync
@@ -745,10 +746,10 @@ npx chain sync
 **✅ Solution:** Check and fix permissions:
 ```bash
 # Check permissions
-ls -la .chain/
+ls -la chain-hub/
 
 # Fix permissions (if needed)
-chmod -R 755 .chain/
+chmod -R 755 chain-hub/
 ```
 
 **💡 Tip**: This problem mainly occurs on Linux/macOS. Windows users rarely have this issue.
@@ -881,11 +882,11 @@ settings:
 # Add project rules
 echo "# Code Style
 - Use TypeScript strict mode
-- Follow conventional commits" > .chain/rules/code-style.md
+- Follow conventional commits" > chain-hub/rules/code-style.md
 
 # Add custom skills
 echo "# Database Helper
-Help me write database queries and migrations" > .chain/skills/database-helper.md
+Help me write database queries and migrations" > chain-hub/skills/database-helper.md
 ```
 
 **💡 Why?** These rules and skills will be available in all your AI editors!
@@ -909,7 +910,7 @@ npx chain watch
 name: Chain Sync
 on:
   push:
-    paths: ['.chain/**', 'chain.yaml']
+    paths: ['chain-hub/**', 'chain.yaml']
 jobs:
   sync:
     runs-on: ubuntu-latest
@@ -923,7 +924,7 @@ jobs:
 
 ### 4. Explore Templates
 
-**🎯 What to do:** Browse built-in templates in `.chain/skills/` and `.chain/workflows/` and customize them for your needs.
+**🎯 What to do:** Browse built-in templates in `chain-hub/skills/` and `chain-hub/workflows/` and customize them for your needs.
 
 **💡 Tip**: These templates are great starting points for your own content.
 
@@ -992,7 +993,7 @@ npx chain promote skills/my-skill.md
 - ✅ Are you in the right project folder?
 - ✅ Do you have Node.js 18+ installed?
 - ✅ Is at least one editor enabled in `chain.yaml`?
-- ✅ Does the `.chain/` folder exist?
+- ✅ Does the `chain-hub/` folder exist?
 - ✅ Have you tried running `validate`?
 
 ---
@@ -1008,7 +1009,7 @@ npx chain promote skills/my-skill.md
 ✅ **Learned troubleshooting** - You know how to fix common issues
 
 **🚀 What's next?**
-- Start adding your own rules and skills to `.chain/`
+- Start adding your own rules and skills to `chain-hub/`
 - Try the `watch` command for automatic syncing
 - Explore the built-in templates
 - Share with your team if you work together

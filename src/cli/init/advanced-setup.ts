@@ -131,8 +131,9 @@ export async function runAdvancedSetup(
         addOption(prevPath, "current");
       }
 
-      // 3. Default fallback
-      addOption("../chain", "default");
+      // 3. Default fallback (visible directory)
+      addOption("~/.chain-hub", "default visible");
+      addOption("../chain", "default relative");
 
       // 4. Custom option
       pathOptions.push({ value: "__custom__", label: "Custom path..." });

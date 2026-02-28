@@ -33,10 +33,10 @@ import { runQuickSetup } from "./init/quick-setup.js";
 import { runAdvancedSetup } from "./init/advanced-setup.js";
 
 /**
- * Setup shared content hub at ~/.chain
+ * Setup shared content hub at ~/.chain or custom visible directory
  */
-async function setupSharedContentHub(): Promise<void> {
-  const sharedHubPath = join(homedir(), '.chain');
+async function setupSharedContentHub(customPath?: string): Promise<void> {
+  const sharedHubPath = customPath || join(homedir(), '.chain');
   
   // Create the main directory structure
   await ensureDir(sharedHubPath);
@@ -58,6 +58,10 @@ async function setupSharedContentHub(): Promise<void> {
   await copyTemplates('rules', sharedHubPath, RULES_DIR);
   
   // Create a README for the shared hub
+  const hubPathDisplay = sharedHubPath.startsWith(homedir()) 
+    ? '~/' + sharedHubPath.slice(homedir().length + 1)
+    : sharedHubPath;
+  
   const readmeContent = `# Shared AI Content Hub
 
 This directory contains shared AI rules, skills, and workflows that can be used across multiple projects.
@@ -76,7 +80,7 @@ To use this shared hub in a project, add to your \`chain.yaml\`:
 \`\`\`yaml
 content_sources:
   - type: local
-    path: ~/.chain
+    path: ${hubPathDisplay}
     include: [rules, skills, workflows]
 \`\`\`
 
@@ -163,11 +167,36 @@ export async function runInit(
       s.start("Creating shared content hub...");
       
       try {
-        await setupSharedContentHub();
-        s.stop("✅ Shared content hub created at ~/.chain");
+        // Check if user wants a visible directory
+        const visibleHub = await p.confirm({
+          message: 'Use visible directory instead of hidden ~/.chain?',
+          default: false,
+        });
+
+        let hubPath: string;
+        if (visibleHub) {
+          const customPath = await p.text({
+            message: 'Enter path for visible chain hub (e.g., ~/chain-hub):',
+            default: '~/chain-hub',
+          });
+          if (isCancelled(customPath)) return;
+          
+          // Expand ~ to home directory
+          hubPath = customPath.startsWith('~/') 
+            ? join(homedir(), customPath.slice(2))
+            : customPath;
+        } else {
+          hubPath = join(homedir(), '.chain');
+        }
+
+        await setupSharedContentHub(hubPath);
+        const displayPath = hubPath.startsWith(homedir()) 
+          ? '~/' + hubPath.slice(homedir().length + 1)
+          : hubPath;
+        s.stop(`✅ Shared content hub created at ${displayPath}`);
         
         p.note(
-          `Shared content hub created at ~/.chain\n\nYou can now use this hub across multiple projects by adding:\n\ncontent_sources:\n  - type: local\n    path: ~/.chain\n    include: [rules, skills, workflows]`,
+          `Shared content hub created at ${displayPath}\n\nYou can now use this hub across multiple projects by adding:\n\ncontent_sources:\n  - type: local\n    path: ${displayPath}\n    include: [rules, skills, workflows]`,
           "Next Steps"
         );
         
