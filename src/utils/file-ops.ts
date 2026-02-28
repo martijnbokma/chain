@@ -2,7 +2,39 @@ import { readFile, writeFile, mkdir, readdir, unlink, access, constants } from '
 import { accessSync, constants as fsConstants } from 'fs';
 import { join, dirname, relative, extname, basename } from 'path';
 import { fileURLToPath } from 'url';
+import { homedir } from 'os';
 import type { ContentFile } from '../core/types.js';
+
+/**
+ * Expands ~ to home directory in paths
+ * @param path - Path that may start with ~
+ * @returns Expanded absolute path
+ */
+export function expandHomePath(path: string): string {
+  if (path.startsWith('~/')) {
+    return join(homedir(), path.slice(2));
+  }
+  if (path === '~') {
+    return homedir();
+  }
+  return path;
+}
+
+/**
+ * Contracts home directory to ~ in paths for display
+ * @param path - Absolute path
+ * @returns Path with ~ if it starts with home directory
+ */
+export function contractHomePath(path: string): string {
+  const home = homedir();
+  if (path.startsWith(home + '/')) {
+    return '~/' + path.slice(home.length + 1);
+  }
+  if (path === home) {
+    return '~';
+  }
+  return path;
+}
 
 export async function ensureDir(dirPath: string): Promise<void> {
   await mkdir(dirPath, { recursive: true });

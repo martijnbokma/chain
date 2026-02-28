@@ -1,5 +1,5 @@
-import { join } from "path";
-import { homedir } from "os";
+import { join, dirname } from 'path';
+import { homedir } from 'os';
 import { readdir } from "fs/promises";
 import yaml from "js-yaml";
 import * as p from "@clack/prompts";
@@ -14,13 +14,7 @@ import {
 } from "../core/types.js";
 import type { ToolkitConfig } from "../core/types.js";
 import { configExists, loadConfig } from "../core/config-loader.js";
-import {
-  ensureDir,
-  writeTextFile,
-  fileExists,
-  readTextFile,
-  getPackageRoot,
-} from "../utils/file-ops.js";
+import { ensureDir, writeTextFile, readTextFile, fileExists, getPackageRoot, expandHomePath, contractHomePath } from '../utils/file-ops.js';
 import { log } from "../utils/logger.js";
 import { runSync } from "../sync/syncer.js";
 import { generateProjectContext } from "../sync/project-context.js";
@@ -192,19 +186,13 @@ export async function runInit(
           });
           if (isCancelled(customPath)) return;
           
-          hubPath = customPath.startsWith('~/') 
-            ? join(homedir(), customPath.slice(2))
-            : customPath;
+          hubPath = expandHomePath(customPath);
         } else {
-          hubPath = pathChoice.startsWith('~/') 
-            ? join(homedir(), pathChoice.slice(2))
-            : pathChoice;
+          hubPath = expandHomePath(pathChoice);
         }
 
         await setupSharedContentHub(hubPath);
-        const displayPath = hubPath.startsWith(homedir()) 
-          ? '~/' + hubPath.slice(homedir().length + 1)
-          : hubPath;
+        const displayPath = contractHomePath(hubPath);
         s.stop(`✅ Shared content hub created at ${displayPath}`);
         
         p.note(

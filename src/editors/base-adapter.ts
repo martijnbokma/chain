@@ -21,33 +21,41 @@ export abstract class BaseEditorAdapter implements EditorAdapter {
 
   generateFrontmatter?(skillName: string, description?: string): string;
 
+  protected buildTitle(config: ToolkitConfig): string {
+    const name = config.metadata?.name || 'Project';
+    return this.entryPointTitle ? `# ${name} — ${this.entryPointTitle}` : `# ${name}`;
+  }
+
+  protected buildTechStackSection(config: ToolkitConfig): string[] {
+    if (!config.tech_stack) return [];
+    
+    const stack = Object.entries(config.tech_stack).filter(([, v]) => v);
+    if (stack.length === 0) return [];
+
+    const lines: string[] = [`## ${this.techStackHeading}`, ''];
+    for (const [key, value] of stack) {
+      lines.push(`- **${key}**: ${value}`);
+    }
+    lines.push('');
+    return lines;
+  }
+
   generateEntryPointContent(config: ToolkitConfig): string {
     const lines: string[] = [AUTO_GENERATED_MARKER, ''];
 
-    const name = config.metadata?.name || 'Project';
-    const desc = config.metadata?.description;
-
-    const title = this.entryPointTitle ? `# ${name} — ${this.entryPointTitle}` : `# ${name}`;
-    lines.push(title);
-    if (desc) lines.push('', desc);
-
-    if (this.hasSeparator) {
-      lines.push('', '---', '');
-    } else {
-      lines.push('');
+    // Title and description
+    lines.push(this.buildTitle(config));
+    if (config.metadata?.description) {
+      lines.push('', config.metadata.description);
     }
 
-    if (config.tech_stack) {
-      const stack = Object.entries(config.tech_stack).filter(([, v]) => v);
-      if (stack.length > 0) {
-        lines.push(`## ${this.techStackHeading}`, '');
-        for (const [key, value] of stack) {
-          lines.push(`- **${key}**: ${value}`);
-        }
-        lines.push('');
-      }
-    }
+    // Separator
+    lines.push(this.hasSeparator ? '' : '', ...this.hasSeparator ? ['---', ''] : ['']);
 
+    // Tech stack
+    lines.push(...this.buildTechStackSection(config));
+
+    // Closing message
     if (this.closingMessage) {
       lines.push(this.closingMessage, '');
     }

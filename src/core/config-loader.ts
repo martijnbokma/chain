@@ -35,43 +35,45 @@ export async function loadConfig(projectRoot: string): Promise<ToolkitConfig> {
   return config;
 }
 
+function getTemplateDirs(projectRoot: string): string[] {
+  return [
+    join(projectRoot, '.chain', 'templates'),
+    join(getPackageRoot(), 'templates'),
+  ];
+}
+
+async function loadTemplateConfig(
+  templateName: string,
+  templatesDirs: string[],
+): Promise<ToolkitConfig> {
+  for (const dir of templatesDirs) {
+    const templatePath = join(dir, `${templateName}.yaml`);
+    if (await fileExists(templatePath)) {
+      const content = await readTextFile(templatePath);
+      const raw = yaml.load(content) as Record<string, unknown>;
+      const parsed = ToolkitConfigSchema.safeParse(raw);
+      if (parsed.success) {
+        return parsed.data;
+      }
+    }
+  }
+
+  throw new Error(
+    `Template "${templateName}" not found. Searched in:\n${templatesDirs.map((d) => `  - ${d}`).join('\n')}`,
+  );
+}
+
 async function resolveExtends(
   config: ToolkitConfig,
   projectRoot: string,
 ): Promise<ToolkitConfig> {
   if (!config.extends || config.extends.length === 0) return config;
 
-  // Find templates directory — check toolkit package location first, then project-local
-  const templatesDirs = [
-    join(projectRoot, '.chain', 'templates'),
-    join(getPackageRoot(), 'templates'),
-  ];
-
+  const templatesDirs = getTemplateDirs(projectRoot);
   let merged = { ...config };
 
   for (const templateName of config.extends) {
-    let templateConfig: ToolkitConfig | null = null;
-
-    for (const dir of templatesDirs) {
-      const templatePath = join(dir, `${templateName}.yaml`);
-      if (await fileExists(templatePath)) {
-        const content = await readTextFile(templatePath);
-        const raw = yaml.load(content) as Record<string, unknown>;
-        const parsed = ToolkitConfigSchema.safeParse(raw);
-        if (parsed.success) {
-          templateConfig = parsed.data;
-          break;
-        }
-      }
-    }
-
-    if (!templateConfig) {
-      throw new Error(
-        `Template "${templateName}" not found. Searched in:\n${templatesDirs.map((d) => `  - ${d}`).join('\n')}`,
-      );
-    }
-
-    // Merge: project config takes priority over template
+    const templateConfig = await loadTemplateConfig(templateName, templatesDirs);
     merged = mergeConfigs(templateConfig, merged);
   }
 

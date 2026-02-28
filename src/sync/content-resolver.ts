@@ -3,7 +3,7 @@ import { homedir } from "os";
 import { createRequire } from "module";
 import type { ContentSource, ContentFile } from '../core/types.js';
 import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR } from '../core/types.js';
-import { findMarkdownFiles, fileExists } from '../utils/file-ops.js';
+import { findMarkdownFiles, fileExists, expandHomePath } from '../utils/file-ops.js';
 import { log } from '../utils/logger.js';
 
 type ContentCategory = 'rules' | 'skills' | 'workflows';
@@ -88,9 +88,7 @@ export async function resolveSourcePath(
       return null;
     }
 
-    const expandedPath = source.path.startsWith("~")
-      ? source.path.replace(/^~/, homedir())
-      : source.path;
+    const expandedPath = expandHomePath(source.path);
     const resolved = isAbsolute(expandedPath)
       ? expandedPath
       : resolve(projectRoot, expandedPath);

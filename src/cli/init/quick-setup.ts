@@ -118,8 +118,7 @@ export async function runQuickSetup(
   };
   const existingMcp = Array.isArray(prev.mcp_servers) ? prev.mcp_servers : [];
   const others = existingMcp.filter(
-    (s): s is Record<string, unknown> =>
-      typeof s === "object" && s !== null && (s as { name?: string }).name !== "chain",
+    (s) => typeof s === "object" && s !== null && (s as { name?: string }).name !== "chain",
   );
   config.mcp_servers = [chainMcp, ...others];
 
@@ -139,8 +138,8 @@ export async function runQuickSetup(
     if (isCancelled(sharedPath)) return null;
 
     // Create shared directory if it doesn't exist
-    const expandedPath = sharedPath.replace(/^~/, homedir());
-    const { ensureDir } = await import('../../utils/file-ops.js');
+    const { ensureDir, expandHomePath } = await import('../../utils/file-ops.js');
+    const expandedPath = expandHomePath(sharedPath);
     await ensureDir(expandedPath);
 
     config.content_sources = [{ type: "local", path: sharedPath }];
