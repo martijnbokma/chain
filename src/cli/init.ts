@@ -167,26 +167,38 @@ export async function runInit(
       s.start("Creating shared content hub...");
       
       try {
-        // Check if user wants a visible directory
-        const visibleHub = await p.confirm({
-          message: 'Use visible directory instead of hidden ~/.chain?',
-          default: false,
+        // Offer predefined path options
+        const pathChoice = await p.select({
+          message: 'Where should the shared content hub be created?',
+          options: [
+            { value: '~/chain-hub', label: '~/chain-hub', hint: 'Visible directory in home (recommended)' },
+            { value: '~/Documents/chain-hub', label: '~/Documents/chain-hub', hint: 'In Documents folder' },
+            { value: '~/Dropbox/chain-hub', label: '~/Dropbox/chain-hub', hint: 'Synced via Dropbox' },
+            { value: '~/Library/Mobile Documents/com~apple~CloudDocs/chain-hub', label: '~/iCloud/chain-hub', hint: 'Synced via iCloud Drive' },
+            { value: '~/OneDrive/chain-hub', label: '~/OneDrive/chain-hub', hint: 'Synced via OneDrive' },
+            { value: '~/Google Drive/chain-hub', label: '~/Google Drive/chain-hub', hint: 'Synced via Google Drive' },
+            { value: '~/.chain', label: '~/.chain', hint: 'Hidden directory (classic)' },
+            { value: '__custom__', label: 'Custom path...', hint: 'Enter your own path' },
+          ],
+          initialValue: '~/chain-hub',
         });
+        if (isCancelled(pathChoice)) return;
 
         let hubPath: string;
-        if (visibleHub) {
+        if (pathChoice === '__custom__') {
           const customPath = await p.text({
-            message: 'Enter path for visible chain hub (e.g., ~/chain-hub):',
-            default: '~/chain-hub',
+            message: 'Enter custom path for chain hub:',
+            placeholder: '~/my-custom-path',
           });
           if (isCancelled(customPath)) return;
           
-          // Expand ~ to home directory
           hubPath = customPath.startsWith('~/') 
             ? join(homedir(), customPath.slice(2))
             : customPath;
         } else {
-          hubPath = join(homedir(), '.chain');
+          hubPath = pathChoice.startsWith('~/') 
+            ? join(homedir(), pathChoice.slice(2))
+            : pathChoice;
         }
 
         await setupSharedContentHub(hubPath);
