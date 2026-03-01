@@ -2,7 +2,9 @@ import { join, resolve, relative } from "path";
 import { createRequire } from "module";
 import * as p from "@clack/prompts";
 import type { ToolkitConfig } from "../../core/types.js";
-import { fileExists } from "../../utils/file-ops.js";
+import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR, OVERRIDES_DIR } from "../../core/types.js";
+import { fileExists, ensureDir, expandHomePath, writeTextFile } from "../../utils/file-ops.js";
+import { copyTemplates } from "../../utils/template-copier.js";
 import {
   isCancelled,
   askProjectName,
@@ -132,8 +134,10 @@ export async function runAdvancedSetup(
       }
 
       // 3. Default fallback (visible directory)
-      addOption("~/.chain-hub", "default visible");
-      addOption("../chain", "default relative");
+      addOption("~/chain-hub", "default visible (recommended)");
+      addOption("~/Dropbox/Code/chain-hub", "Dropbox synced");
+      addOption("~/.chain-hub", "hidden but accessible");
+      addOption("../chain", "relative to project");
 
       // 4. Custom option
       pathOptions.push({ value: "__custom__", label: "Custom path..." });
@@ -159,6 +163,79 @@ export async function runAdvancedSetup(
         finalPath = custom as string;
       }
       if (finalPath) {
+        // Check if this is a tilde path that should trigger hub creation
+        const shouldCreateHub = finalPath.startsWith('~/') && !finalPath.startsWith('../');
+        
+        if (shouldCreateHub) {
+          console.log('🔍 DEBUG: Advanced setup - creating hub at:', finalPath);
+          const expandedPath = expandHomePath(finalPath);
+          console.log('🔍 DEBUG: Expanded path:', expandedPath);
+          
+          // Check if skills directory already exists
+          const skillsPath = join(expandedPath, SKILLS_DIR);
+          const alreadyPopulated = await fileExists(skillsPath);
+          console.log('🔍 DEBUG: Already populated?', alreadyPopulated);
+          
+          if (!alreadyPopulated) {
+            const spinner = p.spinner();
+            spinner.start(`Creating chain hub at ${finalPath}...`);
+            
+            try {
+              // Create directory structure
+              await ensureDir(expandedPath);
+              await ensureDir(join(expandedPath, RULES_DIR));
+              await ensureDir(join(expandedPath, SKILLS_DIR));
+              await ensureDir(join(expandedPath, WORKFLOWS_DIR));
+              await ensureDir(join(expandedPath, OVERRIDES_DIR));
+              
+              // Copy templates
+              console.log('🔍 DEBUG: Copying templates...');
+              await copyTemplates(SKILLS_DIR, expandedPath, SKILLS_DIR);
+              await copyTemplates(WORKFLOWS_DIR, expandedPath, WORKFLOWS_DIR);
+              await copyTemplates(RULES_DIR, expandedPath, RULES_DIR);
+              console.log('🔍 DEBUG: Templates copied');
+              
+              // Create README
+              const readmeContent = `# Shared AI Content Hub
+
+This directory contains shared AI rules, skills, and workflows that can be used across multiple projects.
+
+## Structure
+
+- \`rules/\` - Shared development rules and conventions
+- \`skills/\` - Shared AI skills and commands  
+- \`workflows/\` - Shared development workflows
+- \`overrides/\` - Editor-specific overrides
+
+## Usage
+
+To use this shared hub in a project, add to your \`chain.yaml\`:
+
+\`\`\`yaml
+content_sources:
+  - type: local
+    path: ${finalPath}
+    include: [rules, skills, workflows]
+\`\`\`
+
+## Managing Content
+
+Edit files directly in this directory to update shared content across all projects.
+
+Use \`chain promote <file>\` in any project to promote local content to this shared hub.
+`;
+              await writeTextFile(join(expandedPath, 'README.md'), readmeContent);
+              
+              spinner.stop(`✅ Chain hub created and populated at ${finalPath}`);
+            } catch (error) {
+              spinner.stop(`❌ Failed to create chain hub`);
+              console.error('Error details:', error);
+            }
+          } else {
+            p.log.info(`Chain hub already exists at ${finalPath}`);
+          }
+        }
+        
         config.content_sources = [{ type: "local", path: finalPath }];
       }
     }

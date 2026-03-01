@@ -3,7 +3,10 @@ import { homedir } from "os";
 import { createRequire } from "module";
 import * as p from "@clack/prompts";
 import type { ToolkitConfig } from "../../core/types.js";
-import { fileExists } from "../../utils/file-ops.js";
+import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR, OVERRIDES_DIR } from "../../core/types.js";
+import { fileExists, ensureDir, expandHomePath, writeTextFile } from "../../utils/file-ops.js";
+import { copyTemplates } from "../../utils/template-copier.js";
+import { browseDirectory } from "./directory-browser.js";
 import {
   isCancelled,
   askProjectName,
@@ -130,24 +133,51 @@ export async function runQuickSetup(
   if (isCancelled(useSharedContent)) return null;
 
   if (useSharedContent) {
+    console.log('🔍 DEBUG: useSharedContent is TRUE, showing path selection...');
     const pathChoice = await p.select({
       message: 'Where should your shared content be stored?',
       options: [
         { value: '~/chain-hub', label: '~/chain-hub', hint: 'Visible directory in home (recommended)' },
         { value: '~/Documents/chain-hub', label: '~/Documents/chain-hub', hint: 'In Documents folder' },
         { value: '~/Dropbox/chain-hub', label: '~/Dropbox/chain-hub', hint: 'Synced via Dropbox' },
+        { value: '__browse_dropbox__', label: '📁 Browse Dropbox...', hint: 'Navigate through Dropbox folders' },
         { value: '~/Library/Mobile Documents/com~apple~CloudDocs/chain-hub', label: '~/iCloud/chain-hub', hint: 'Synced via iCloud Drive' },
+        { value: '__browse_icloud__', label: '📁 Browse iCloud...', hint: 'Navigate through iCloud folders' },
         { value: '~/OneDrive/chain-hub', label: '~/OneDrive/chain-hub', hint: 'Synced via OneDrive' },
+        { value: '__browse_onedrive__', label: '📁 Browse OneDrive...', hint: 'Navigate through OneDrive folders' },
         { value: '~/Google Drive/chain-hub', label: '~/Google Drive/chain-hub', hint: 'Synced via Google Drive' },
+        { value: '__browse_gdrive__', label: '📁 Browse Google Drive...', hint: 'Navigate through Google Drive folders' },
+        { value: '__browse_home__', label: '📁 Browse home directory...', hint: 'Navigate through your folders' },
         { value: '~/.chain-hub', label: '~/.chain-hub', hint: 'Hidden but visible with ls -la' },
-        { value: '__custom__', label: 'Custom path...', hint: 'Enter your own path' },
+        { value: '__custom__', label: 'Custom path...', hint: 'Type your own path' },
       ],
       initialValue: '~/chain-hub',
     });
+    console.log('🔍 DEBUG: pathChoice =', pathChoice);
     if (isCancelled(pathChoice)) return null;
 
     let sharedPath: string;
-    if (pathChoice === '__custom__') {
+    if (pathChoice === '__browse_dropbox__') {
+      const browsedPath = await browseDirectory('~/Dropbox', 'Select location for chain-hub');
+      if (!browsedPath) return null;
+      sharedPath = browsedPath;
+    } else if (pathChoice === '__browse_icloud__') {
+      const browsedPath = await browseDirectory('~/Library/Mobile Documents/com~apple~CloudDocs', 'Select location for chain-hub');
+      if (!browsedPath) return null;
+      sharedPath = browsedPath;
+    } else if (pathChoice === '__browse_onedrive__') {
+      const browsedPath = await browseDirectory('~/OneDrive', 'Select location for chain-hub');
+      if (!browsedPath) return null;
+      sharedPath = browsedPath;
+    } else if (pathChoice === '__browse_gdrive__') {
+      const browsedPath = await browseDirectory('~/Google Drive', 'Select location for chain-hub');
+      if (!browsedPath) return null;
+      sharedPath = browsedPath;
+    } else if (pathChoice === '__browse_home__') {
+      const browsedPath = await browseDirectory('~', 'Select location for chain-hub');
+      if (!browsedPath) return null;
+      sharedPath = browsedPath;
+    } else if (pathChoice === '__custom__') {
       const customPath = await p.text({
         message: 'Enter custom path for shared content:',
         placeholder: '~/my-custom-path',
@@ -158,10 +188,83 @@ export async function runQuickSetup(
       sharedPath = pathChoice;
     }
 
-    // Create shared directory if it doesn't exist
-    const { ensureDir, expandHomePath } = await import('../../utils/file-ops.js');
+    // Create and populate shared directory
+    console.log('🔍 DEBUG: sharedPath =', sharedPath);
     const expandedPath = expandHomePath(sharedPath);
-    await ensureDir(expandedPath);
+    console.log('🔍 DEBUG: expandedPath =', expandedPath);
+    
+    // Check if skills directory already exists (indicates hub is already populated)
+    const skillsPath = join(expandedPath, SKILLS_DIR);
+    console.log('🔍 DEBUG: checking if exists:', skillsPath);
+    const alreadyPopulated = await fileExists(skillsPath);
+    console.log('🔍 DEBUG: alreadyPopulated =', alreadyPopulated);
+    
+    if (!alreadyPopulated) {
+      console.log('🔍 DEBUG: Starting hub creation...');
+      const spinner = p.spinner();
+      spinner.start(`Creating chain hub at ${sharedPath}...`);
+      
+      try {
+        // Create directory structure
+        await ensureDir(expandedPath);
+        await ensureDir(join(expandedPath, RULES_DIR));
+        await ensureDir(join(expandedPath, SKILLS_DIR));
+        await ensureDir(join(expandedPath, WORKFLOWS_DIR));
+        await ensureDir(join(expandedPath, OVERRIDES_DIR));
+        
+        // Copy templates from package
+        console.log('🔍 DEBUG: Copying skills...');
+        await copyTemplates(SKILLS_DIR, expandedPath, SKILLS_DIR);
+        console.log('🔍 DEBUG: Skills copied');
+        
+        console.log('🔍 DEBUG: Copying workflows...');
+        await copyTemplates(WORKFLOWS_DIR, expandedPath, WORKFLOWS_DIR);
+        console.log('🔍 DEBUG: Workflows copied');
+        
+        console.log('🔍 DEBUG: Copying rules...');
+        await copyTemplates(RULES_DIR, expandedPath, RULES_DIR);
+        console.log('🔍 DEBUG: Rules copied');
+        
+        // Create README
+        const readmeContent = `# Shared AI Content Hub
+
+This directory contains shared AI rules, skills, and workflows that can be used across multiple projects.
+
+## Structure
+
+- \`rules/\` - Shared development rules and conventions
+- \`skills/\` - Shared AI skills and commands  
+- \`workflows/\` - Shared development workflows
+- \`overrides/\` - Editor-specific overrides
+
+## Usage
+
+To use this shared hub in a project, add to your \`chain.yaml\`:
+
+\`\`\`yaml
+content_sources:
+  - type: local
+    path: ${sharedPath}
+    include: [rules, skills, workflows]
+\`\`\`
+
+## Managing Content
+
+Edit files directly in this directory to update shared content across all projects.
+
+Use \`chain promote <file>\` in any project to promote local content to this shared hub.
+`;
+        await writeTextFile(join(expandedPath, 'README.md'), readmeContent);
+        
+        spinner.stop(`✅ Chain hub created and populated at ${sharedPath}`);
+      } catch (error) {
+        spinner.stop(`❌ Failed to create chain hub`);
+        console.error('Error details:', error);
+        throw error;
+      }
+    } else {
+      p.log.info(`Chain hub already exists at ${sharedPath}`);
+    }
 
     config.content_sources = [{ type: "local", path: sharedPath }];
   }

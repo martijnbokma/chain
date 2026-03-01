@@ -15,6 +15,7 @@ import {
 import type { ToolkitConfig } from "../core/types.js";
 import { configExists, loadConfig } from "../core/config-loader.js";
 import { ensureDir, writeTextFile, readTextFile, fileExists, getPackageRoot, expandHomePath, contractHomePath } from '../utils/file-ops.js';
+import { copyTemplates } from '../utils/template-copier.js';
 import { log } from "../utils/logger.js";
 import { runSync } from "../sync/syncer.js";
 import { generateProjectContext } from "../sync/project-context.js";
@@ -24,7 +25,6 @@ import { installPreCommitHook } from "../utils/git-hooks.js";
 import { addSyncScripts } from "../utils/package-scripts.js";
 import { isCancelled } from "./init/prompt-helpers.js";
 import { runQuickSetup } from "./init/quick-setup.js";
-import { runAdvancedSetup } from "./init/advanced-setup.js";
 
 /**
  * Setup shared content hub at ~/.chain or custom visible directory
@@ -103,40 +103,6 @@ const EXAMPLE_RULE = `# Project Conventions
 - Write tests for new functionality
 - Maintain existing test coverage
 `;
-
-// Used when templates/rules/ has no project-conventions.md
-
-async function copyTemplates(
-  templateSubdir: string,
-  contentDir: string,
-  targetSubdir: string,
-): Promise<void> {
-  const packageRoot = getPackageRoot();
-  const templatesDir = join(packageRoot, "templates", templateSubdir);
-  const targetDir = join(contentDir, targetSubdir);
-
-  try {
-    const entries = await readdir(templatesDir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      if (entry.isDirectory()) {
-        await copyTemplates(
-          join(templateSubdir, entry.name),
-          contentDir,
-          join(targetSubdir, entry.name),
-        );
-      } else if (entry.isFile() && entry.name.endsWith(".md")) {
-        const targetPath = join(targetDir, entry.name);
-        if (await fileExists(targetPath)) continue;
-
-        const content = await readTextFile(join(templatesDir, entry.name));
-        await writeTextFile(targetPath, content);
-      }
-    }
-  } catch {
-    // Templates dir doesn't exist — skip silently
-  }
-}
 
 export async function runInit(
   projectRoot: string,
@@ -225,24 +191,10 @@ export async function runInit(
       }
     }
 
-    // Use advanced mode if explicitly requested, or if re-init with existing content sources
-    const useAdvanced =
-      advanced ||
-      (existing?.content_sources && existing.content_sources.length > 0);
+    // Always use quick setup for simplicity
+    p.intro(force ? "🔄 Chain re-init" : "🚀 Chain setup");
 
-    if (useAdvanced) {
-      p.intro(
-        force
-          ? "🔄 Chain re-init (advanced)"
-          : "🚀 Chain setup (advanced)",
-      );
-    } else {
-      p.intro(force ? "🔄 Chain re-init" : "🚀 Chain setup");
-    }
-
-    const result = useAdvanced
-      ? await runAdvancedSetup(projectRoot, existing)
-      : await runQuickSetup(projectRoot, existing);
+    const result = await runQuickSetup(projectRoot, existing);
     if (!result) {
       p.cancel("Setup cancelled.");
       process.exit(0);
