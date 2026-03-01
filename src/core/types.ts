@@ -195,7 +195,6 @@ export const CONTENT_DIR = '.chain';
 export const SKILLS_DIR = 'skills';
 export const RULES_DIR = 'rules';
 export const WORKFLOWS_DIR = 'workflows';
-export const OVERRIDES_DIR = 'overrides';
 export const PROJECT_CONTEXT_FILE = 'PROJECT.md';
 
 

@@ -2,7 +2,7 @@ import { join, resolve, relative } from "path";
 import { createRequire } from "module";
 import * as p from "@clack/prompts";
 import type { ToolkitConfig } from "../../core/types.js";
-import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR, OVERRIDES_DIR } from "../../core/types.js";
+import { RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR } from "../../core/types.js";
 import { fileExists, ensureDir, expandHomePath, writeTextFile } from "../../utils/file-ops.js";
 import { copyTemplates } from "../../utils/template-copier.js";
 import {
@@ -186,7 +186,6 @@ export async function runAdvancedSetup(
               await ensureDir(join(expandedPath, RULES_DIR));
               await ensureDir(join(expandedPath, SKILLS_DIR));
               await ensureDir(join(expandedPath, WORKFLOWS_DIR));
-              await ensureDir(join(expandedPath, OVERRIDES_DIR));
               
               // Copy templates
               console.log('🔍 DEBUG: Copying templates...');
@@ -205,7 +204,6 @@ This directory contains shared AI rules, skills, and workflows that can be used 
 - \`rules/\` - Shared development rules and conventions
 - \`skills/\` - Shared AI skills and commands  
 - \`workflows/\` - Shared development workflows
-- \`overrides/\` - Editor-specific overrides
 
 ## Usage
 

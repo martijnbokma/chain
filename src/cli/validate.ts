@@ -1,6 +1,6 @@
 import { join } from 'path';
 import { loadConfig } from '../core/config-loader.js';
-import { CONTENT_DIR, RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR, OVERRIDES_DIR } from '../core/types.js';
+import { CONTENT_DIR, RULES_DIR, SKILLS_DIR, WORKFLOWS_DIR } from '../core/types.js';
 import { getEnabledAdapters } from '../editors/registry.js';
 import { findMarkdownFiles, fileExists } from '../utils/file-ops.js';
 import { log, createSpinner } from '../utils/logger.js';
@@ -51,27 +51,7 @@ export async function runValidateCommand(projectRoot: string): Promise<void> {
       log.warn('No rules or skills found. Add markdown files to .chain/rules/ or .chain/skills/');
     }
 
-    // 5. Check overrides reference valid editors
-    const overridesDir = join(contentDir, OVERRIDES_DIR);
-    if (await fileExists(overridesDir)) {
-      const { readdir } = await import('fs/promises');
-      try {
-        const entries = await readdir(overridesDir, { withFileTypes: true });
-        const editorNames = new Set(adapters.map((a) => a.name));
-
-        for (const entry of entries) {
-          if (entry.isDirectory()) {
-            if (!editorNames.has(entry.name as any)) {
-              log.warn(`Override directory "${entry.name}" does not match any enabled editor`);
-            }
-          }
-        }
-      } catch {
-        // overrides dir doesn't exist, that's fine
-      }
-    }
-
-    // 6. Validate MCP servers
+    // 5. Validate MCP servers
     if (config.mcp_servers && config.mcp_servers.length > 0) {
       const mcpAdapters = adapters.filter((a) => a.mcpConfigPath);
       if (mcpAdapters.length === 0) {

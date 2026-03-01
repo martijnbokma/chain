@@ -9,7 +9,6 @@ import {
   SKILLS_DIR,
   RULES_DIR,
   WORKFLOWS_DIR,
-  OVERRIDES_DIR,
   PROJECT_CONTEXT_FILE,
 } from "../core/types.js";
 import type { ToolkitConfig } from "../core/types.js";
@@ -37,7 +36,6 @@ async function setupSharedContentHub(customPath?: string): Promise<void> {
   await ensureDir(join(sharedHubPath, RULES_DIR));
   await ensureDir(join(sharedHubPath, SKILLS_DIR));
   await ensureDir(join(sharedHubPath, WORKFLOWS_DIR));
-  await ensureDir(join(sharedHubPath, OVERRIDES_DIR));
   
   // Copy templates from the package
   const packageRoot = getPackageRoot();
@@ -65,7 +63,6 @@ This directory contains shared AI rules, skills, and workflows that can be used 
 - \`rules/\` - Shared development rules and conventions
 - \`skills/\` - Shared AI skills and commands  
 - \`workflows/\` - Shared development workflows
-- \`overrides/\` - Editor-specific overrides
 
 ## Usage
 
@@ -218,7 +215,6 @@ export async function runInit(
       join(contentDir, RULES_DIR),
       join(contentDir, SKILLS_DIR),
       join(contentDir, WORKFLOWS_DIR),
-      join(contentDir, OVERRIDES_DIR),
     ];
 
     for (const dir of dirs) {
