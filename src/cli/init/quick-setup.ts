@@ -130,12 +130,33 @@ export async function runQuickSetup(
   if (isCancelled(useSharedContent)) return null;
 
   if (useSharedContent) {
-    const sharedPath = await p.text({
-      message: "Where should your shared content be stored?",
-      initialValue: "~/.chain-hub",
-      placeholder: "~/.chain-hub",
+    const pathChoice = await p.select({
+      message: 'Where should your shared content be stored?',
+      options: [
+        { value: '~/chain-hub', label: '~/chain-hub', hint: 'Visible directory in home (recommended)' },
+        { value: '~/Documents/chain-hub', label: '~/Documents/chain-hub', hint: 'In Documents folder' },
+        { value: '~/Dropbox/chain-hub', label: '~/Dropbox/chain-hub', hint: 'Synced via Dropbox' },
+        { value: '~/Library/Mobile Documents/com~apple~CloudDocs/chain-hub', label: '~/iCloud/chain-hub', hint: 'Synced via iCloud Drive' },
+        { value: '~/OneDrive/chain-hub', label: '~/OneDrive/chain-hub', hint: 'Synced via OneDrive' },
+        { value: '~/Google Drive/chain-hub', label: '~/Google Drive/chain-hub', hint: 'Synced via Google Drive' },
+        { value: '~/.chain-hub', label: '~/.chain-hub', hint: 'Hidden but visible with ls -la' },
+        { value: '__custom__', label: 'Custom path...', hint: 'Enter your own path' },
+      ],
+      initialValue: '~/chain-hub',
     });
-    if (isCancelled(sharedPath)) return null;
+    if (isCancelled(pathChoice)) return null;
+
+    let sharedPath: string;
+    if (pathChoice === '__custom__') {
+      const customPath = await p.text({
+        message: 'Enter custom path for shared content:',
+        placeholder: '~/my-custom-path',
+      });
+      if (isCancelled(customPath)) return null;
+      sharedPath = customPath;
+    } else {
+      sharedPath = pathChoice;
+    }
 
     // Create shared directory if it doesn't exist
     const { ensureDir, expandHomePath } = await import('../../utils/file-ops.js');
